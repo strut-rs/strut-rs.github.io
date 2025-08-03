@@ -69,7 +69,7 @@ const config: Config = {
 
         announcementBar: {
             id: 'rust-conf-2025',
-            content: 'Join us at <a target="_blank" rel="noopener noreferrer" href="https://rustconf.com/">#RustConf2025</a> on September 2–5, 2025',
+            content: 'Join us at <a target="_blank" rel="noopener noreferrer" href="https://rustconf.com/">#RustConf2025</a>',
             isCloseable: false,
         },
 
@@ -77,7 +77,7 @@ const config: Config = {
             title: 'Home',
             logo: {
                 alt: 'Strut Logo',
-                src: 'img/logo.svg',
+                src: 'img/logo.png',
             },
             items: [
                 {
