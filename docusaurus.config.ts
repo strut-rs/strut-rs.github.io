@@ -68,10 +68,16 @@ const config: Config = {
         image: 'img/social-card.png',
 
         announcementBar: {
-            id: 'rust-conf-2025',
-            content: 'Join us at <a target="_blank" rel="noopener noreferrer" href="https://rustconf.com/">#RustConf2025</a>',
+            id: 'pre-release-notice',
+            content: 'This is a pre-release page; development is in progress',
             isCloseable: false,
         },
+
+        // announcementBar: {
+        //     id: 'rust-conf-2025',
+        //     content: 'Join us at <a target="_blank" rel="noopener noreferrer" href="https://rustconf.com/">#RustConf2025</a>',
+        //     isCloseable: false,
+        // },
 
         navbar: {
             title: 'Home',
