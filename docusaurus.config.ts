@@ -36,7 +36,7 @@ const config: Config = {
             {
                 docs: {
                     sidebarPath: './sidebars.ts',
-                    editUrl: 'https://github.com/strut-rs/strut-rs.github.io',
+                    editUrl: 'https://github.com/strut-rs/strut-rs.github.io/edit/main',
                 },
                 blog: {
                     showReadingTime: true,
@@ -45,7 +45,7 @@ const config: Config = {
                         xslt: true,
                     },
 
-                    editUrl: 'https://github.com/strut-rs/strut-rs.github.io',
+                    editUrl: 'https://github.com/strut-rs/strut-rs.github.io/edit/main',
 
                     onInlineTags: 'warn',
                     onInlineAuthors: 'warn',
@@ -89,7 +89,7 @@ const config: Config = {
                 {
                     label: 'Quickstart',
                     type: 'doc',
-                    docId: 'quickstart',
+                    docId: 'quickstart/index',
                     position: 'left',
                 },
                 {
@@ -182,6 +182,11 @@ const config: Config = {
         prism: {
             theme: prismThemes.github,
             darkTheme: prismThemes.dracula,
+            additionalLanguages: [
+                'bash',
+                'yaml',
+                'toml',
+            ]
         },
 
     } satisfies Preset.ThemeConfig,

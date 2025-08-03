@@ -1,0 +1,153 @@
+---
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Quickstart
+
+Let’s learn Strut with an example.
+
+[crates-io-config]: https://crates.io/crates/config
+[crates-io-tracing]: https://crates.io/crates/tracing
+
+## Strut dependency
+
+Create a binary crate and add the `strut` dependency:
+
+```bash
+cargo new demo-app && cd demo-app
+cargo add strut
+```
+
+Write a simple main function:
+
+```rust title="src/main.rs"
+use strut::AppConfig;
+
+#[strut::main]
+async fn main() {
+    let config = AppConfig::get();
+
+    println!("Running {}...", config.name());
+}
+```
+
+Run the application with `cargo run`:
+
+![Output of `cargo run` with defaults](./intro-01.svg)
+
+Impressive, right?
+Just kidding, it gets better.
+
+The application name (same as everything in `AppConfig`) has a reasonable default.
+
+## Add configuration
+
+Let’s configure the name explicitly (under the hood, the [`config`][crates-io-config] crate is used):
+
+<Tabs>
+<TabItem value="YAML">
+```yaml title="config/app.yaml"
+name: app-backend
+```
+</TabItem>
+<TabItem value="TOML">
+```toml title="config/app.toml"
+name = "app-backend"
+```
+</TabItem>
+</Tabs>
+
+Now, when we `cargo run`, the output is:
+
+![Output of `cargo run` with config file](./intro-02.svg)
+
+## Override configuration
+
+We can also set/override all config entries with environment variables:
+
+```bash
+APP_NAME=custom-app cargo run
+```
+
+![Output of `cargo run` with environment override](./intro-03.svg)
+
+Nothing too exciting so far.
+
+## Example component
+
+The bulk of Strut’s usefulness comes from components.
+Components are enabled via feature flags.
+
+### Add `tracing` component
+
+Most applications benefit from logging and tracing.
+The `tracing` feature pulls and pre-configures the [`tracing`][crates-io-tracing] crate.
+
+```bash
+cargo add strut --features tracing
+```
+
+Change the main function to use `tracing` macros instead.
+(We don’t depend on the `tracing` crate directly, but Strut re-exports important APIs for us.)
+
+```rust title="src/main.rs"
+use strut::AppConfig;
+use strut::tracing::info;
+
+#[strut::main]
+async fn main() {
+    let config = AppConfig::get();
+
+    info!("Running {}...", config.name());
+}
+```
+
+Now, `cargo run` outputs something more serious, and perhaps familiar:
+
+![Output of `cargo run` with `tracing` feature](./intro-04.svg)
+
+A few things to notice:
+
+- Strut maintains an application context which is terminated on shutdown.
+- A spindown procedure is baked in, where long-running services have a chance to free resources.
+
+### Add `prod` configuration
+
+The tracing output is nice and human-readable.
+But in `prod` we almost certainly need structured logging.
+Let’s add that:
+
+```bash
+cargo add strut --features tracing-json
+```
+
+Add a `prod`-specific config file following the naming convention:
+
+<Tabs>
+<TabItem value="YAML">
+```yaml title="config/app.prod.yaml"
+tracing:
+    flavor: json # “flavour” works too :)
+```
+</TabItem>
+<TabItem value="TOML">
+```toml title="config/app.prod.toml"
+[tracing]
+flavor = "json" # “flavour” works too :)
+```
+</TabItem>
+</Tabs>
+
+Nothing will change for `cargo run`.
+But when we set the runtime profile to `prod`:
+
+```bash
+APP_PROFILE=prod cargo run
+```
+
+The output is now fit for streaming structured logs:
+
+![Output of `cargo run` with `tracing-json` feature](./intro-05.svg)
