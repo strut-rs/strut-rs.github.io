@@ -19,6 +19,8 @@ const config: Config = {
 
     organizationName: 'strut-rs',
     projectName: 'strut-rs.github.io',
+    deploymentBranch: 'gh-pages',
+    trailingSlash: false,
 
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
