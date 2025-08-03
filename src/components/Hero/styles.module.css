@@ -1,0 +1,98 @@
+:root {
+    --button-background: #1b1b1d;
+    --button-text: #ffffff;
+}
+
+[data-theme='dark'] {
+    --button-background: #ffffff;
+    --button-text: #1b1b1d;
+}
+
+.hero {
+    padding: 4rem 2rem;
+    overflow: hidden;
+}
+
+.heroContent {
+    display: flex;
+    gap: 4rem;
+
+    max-width: 64rem;
+    margin: 0 auto;
+}
+
+.left {
+    flex: 1 1 auto;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+}
+
+.right {
+    flex: 1 1 auto;
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: 800;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+
+.subtitleHighlight {
+    font-weight: 600;
+}
+
+.buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.button {
+    font-size: 1rem;
+    font-weight: 700;
+
+    padding: 0.5rem 2rem;
+    border-radius: 2rem;
+    border: none;
+
+    background: var(--button-background);
+    color: var(--button-text);
+}
+
+.heroImage {
+    max-height: 26rem;
+    width: 100%;
+    object-fit: contain;
+}
+
+@media screen and (max-width: 996px) {
+    .heroContent {
+        flex-direction: column;
+        gap: 2rem;
+        align-items: center;
+    }
+
+    .left {
+        align-items: center;
+        text-align: center;
+    }
+
+    .title {
+        font-size: 2.5rem;
+    }
+
+    .subtitle {
+        font-size: 1.5rem;
+    }
+
+    .buttons {
+        justify-content: center;
+    }
+}
