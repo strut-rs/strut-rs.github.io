@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xsl" href="atom.xsl"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://strut-rs.github.io/blog</id>
+    <title>Strut Blog</title>
+    <updated>2025-07-29T00:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://strut-rs.github.io/blog"/>
+    <subtitle>Strut Blog</subtitle>
+    <icon>https://strut-rs.github.io/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Inception]]></title>
+        <id>https://strut-rs.github.io/blog/inception</id>
+        <link href="https://strut-rs.github.io/blog/inception"/>
+        <updated>2025-07-29T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Strut was created to address real pain points.]]></summary>
+        <content type="html"><![CDATA[<p>Strut was created to address real pain points.</p>
+<p>When I began developing backend services in Rust, I quickly realized how much boilerplate stood between me and my first meaningful line of business logic.
+Before I could build anything useful, I had to set up configuration, logging, and manually wire up persistence, messaging, and alerting.
+That meant introducing an async runtime, and then worrying about how to gracefully shut down all those external connections when the application exited.
+And once I finally had everything working, I found myself dreading the thought of repeating this setup for the next backend—copy-pasting all that code was hardly ideal.</p>
+<p>Strut aims to make this process painless.
+It’s a convenience and configuration layer—a crate that gathers and pre-configures popular crates commonly used in backend development.
+The idea is simple: enable or disable backend features with minimal code.
+Strut provides sensible defaults and promotes straightforward, intuitive conventions.</p>
+<p>Importantly, Strut is not a <em>framework</em>.
+Rust’s language design doesn’t mesh well with traditional dependency injection, and I didn’t want to force a framework where it wasn’t needed.
+My focus was on eliminating repetitive configuration, not imposing too much structure.</p>
+<p>The first public release of Strut includes the essentials:</p>
+<ul>
+<li>Asynchronous runtime (<a href="https://crates.io/crates/tokio" target="_blank" rel="noopener noreferrer"><code>tokio</code></a>)</li>
+<li>Externalized configuration (<a href="https://crates.io/crates/config" target="_blank" rel="noopener noreferrer"><code>config</code></a>)</li>
+<li>Logging (<a href="https://crates.io/crates/tracing" target="_blank" rel="noopener noreferrer"><code>tracing</code></a>)</li>
+<li>Alerting (<a href="https://crates.io/crates/sentry" target="_blank" rel="noopener noreferrer"><code>sentry</code></a>)</li>
+<li>Persistence (<a href="https://crates.io/crates/sqlx" target="_blank" rel="noopener noreferrer"><code>sqlx</code></a>)</li>
+<li>Messaging (<a href="https://crates.io/crates/lapin" target="_blank" rel="noopener noreferrer"><code>lapin</code></a>)</li>
+</ul>
+<p>The async runtime and configuration are always included, while the rest are opt-in via feature flags.</p>
+<p>Strut deliberately avoids plug-and-play support for alternative libraries.
+For example, asynchrony is provided exclusively through <code>tokio</code>—there’s no option to swap in <code>async-std</code>, <code>smol</code>, or others.
+This decision is intentional: Strut values consistency and simplicity over maximum flexibility.</p>
+<p>Looking ahead, I plan to expand Strut’s component lineup as new needs emerge.
+If you’d like to contribute, please check out <a href="https://github.com/strut-rs/strut/blob/master/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer"><code>CONTRIBUTING.md</code></a>.</p>]]></content>
+        <author>
+            <name>Erik Sargazakov</name>
+            <uri>https://www.linkedin.com/in/lambdas-and-latte/</uri>
+        </author>
+        <category label="Development" term="Development"/>
+    </entry>
+</feed>

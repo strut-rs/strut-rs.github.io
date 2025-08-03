@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkstrut_home=self.webpackChunkstrut_home||[]).push([[472],{5513:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"Inception","permalink":"/blog/inception","unlisted":false,"date":"2025-07-29T00:00:00.000Z"}]}')}}]);

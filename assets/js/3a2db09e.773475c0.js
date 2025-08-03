@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkstrut_home=self.webpackChunkstrut_home||[]).push([[121],{8070:e=>{e.exports=JSON.parse('{"tags":[{"label":"Development","permalink":"/blog/tags/dev","description":"Strut development announcements","count":1}]}')}}]);
