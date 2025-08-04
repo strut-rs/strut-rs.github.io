@@ -1,3 +1,60 @@
+:root {
+    /* Window & Background */
+    --color-window-bg:      #2d323a;
+    --color-window-shadow:  #0008;
+
+    /* Window Buttons */
+    --color-btn-red:    #f45f5b;
+    --color-btn-yellow: #fdbc40;
+    --color-btn-green:  #34c84a;
+
+    /* Raw Color Palette */
+    --raw-vivid-red:    #f45f5b;
+    --raw-vivid-yellow: #fdbc40;
+    --raw-vivid-green:  #34c84a;
+    --raw-red:          #bf616a;
+    --raw-yellow:       #ebcb8b;
+    --raw-green:        #a3be8c;
+    --raw-blue:         #81a1c1;
+    --raw-purple:       #b48ead;
+    --raw-cyan:         #88c0d0;
+    --raw-orange:       #d08770;
+    --raw-teal:         #8fbcbb;
+    --raw-gray:         #6d7886;
+    --raw-dark-gray:    #434a54;
+    --raw-light:        #d3d6db;
+    --raw-alt-light:    #e5e9f0;
+
+    /* Code */
+    --color-code: var(--raw-light);
+
+    /* Semantic Color Mapping */
+    --color-hl-keyword:     var(--raw-blue);        /* Keywords: if, for, import, return */
+    --color-hl-string:      var(--raw-green);       /* Strings: "hello", `template` */
+    --color-hl-literal:     var(--raw-purple);      /* Literals: 123, true, null, const FOO */
+    --color-hl-function:    var(--raw-cyan);        /* Functions & methods: myFunction() */
+    --color-hl-definition:  var(--raw-teal);        /* Definitions: class, interface, type */
+    --color-hl-property:    var(--raw-yellow);      /* Object properties & members */
+    --color-hl-variable:    var(--raw-alt-light);   /* Variables (subtle for readability) */
+    --color-hl-operator:    var(--raw-blue);        /* Operators: +, -, = */
+    --color-hl-tag:         var(--raw-blue);        /* Tags: <div>, <p> */
+    --color-hl-attribute:   var(--raw-yellow);      /* Attributes (HTML or code) */
+    --color-hl-special:     var(--raw-orange);      /* Special tokens: @decorators, regex */
+    --color-hl-comment:     var(--raw-gray);        /* Comments: // a comment */
+    --color-hl-punctuation: var(--raw-light);       /* Punctuation: {}, (), [] */
+
+    /* Diagnostics & Status */
+    --color-hl-trace:   var(--raw-gray);            /* Fine-grained, verbose logging */
+    --color-hl-debug:   var(--raw-purple);          /* Development-time debugging */
+    --color-hl-info:    var(--raw-cyan);            /* Informational messages */
+    --color-hl-notice:  var(--raw-blue);            /* Important, but not urgent, info */
+    --color-hl-success: var(--raw-vivid-green);     /* Successful operations */
+    --color-hl-warning: var(--raw-vivid-yellow);    /* Potential issues */
+    --color-hl-error:   var(--raw-red);             /* Errors that don't halt execution */
+    --color-hl-fatal:   var(--raw-vivid-red);       /* Critical, app-breaking errors */
+    --color-hl-muted:   var(--raw-dark-gray);       /* De-emphasized text */
+}
+
 .body {
     display: flex;
     flex: 1 1 auto;
@@ -6,10 +63,10 @@
 }
 
 .window {
-    background: #2d323a;
+    background: var(--color-window-bg);
     border-radius: 12px;
     width: 360px;
-    box-shadow: 0 4px 32px #0008;
+    box-shadow: 0 4px 32px var(--color-window-shadow);
     padding-bottom: 24px;
 }
 
@@ -27,15 +84,15 @@
 }
 
 .btnRed {
-    background: #f45f5b;
+    background: var(--color-btn-red);
 }
 
 .btnYellow {
-    background: #fdbc40;
+    background: var(--color-btn-yellow);
 }
 
 .btnGreen {
-    background: #34c84a;
+    background: var(--color-btn-green);
 }
 
 .codeBlock {
@@ -43,25 +100,134 @@
     padding: 24px 24px 0 24px;
     font-size: 1em;
     font-family: 'Fira Code', monospace;
-    color: #d3d6db;
+    color: var(--color-code);
     background: none;
     line-height: 1.6;
     white-space: pre;
 }
 
-.hlPurple {
-    color: #b48ead;
+/* --- Syntax Highlighting Classes --- */
+
+/* Keywords: if, for, import, return */
+.hlKeyword {
+    color: var(--color-hl-keyword);
 }
 
-.hlYellow {
-    color: #ebcb8b;
+/* Strings: "hello", `template` */
+.hlString {
+    color: var(--color-hl-string);
 }
 
-.hlBlue {
-    color: #81a1c1;
+/* Literals (123, true, null, const FOO) */
+.hlLiteral {
+    color: var(--color-hl-literal);
 }
 
+/* Functions & methods: myFunction() */
+.hlFunction {
+    color: var(--color-hl-function);
+}
+
+/* Definitions: class, interface, type */
+.hlDefinition {
+    color: var(--color-hl-definition);
+}
+
+/* Object properties & members */
+.hlProperty {
+    color: var(--color-hl-property);
+}
+
+/* Variables */
+.hlVariable {
+    color: var(--color-hl-variable);
+}
+
+/* Operators: +, -, = */
+.hlOperator {
+    color: var(--color-hl-operator);
+}
+
+/* Tags: <div>, <p> */
+.hlTag {
+    color: var(--color-hl-tag);
+}
+
+/* Attributes (e.g., HTML class="") */
+.hlAttribute {
+    color: var(--color-hl-attribute);
+}
+
+/* Special tokens: @decorators, regex */
+.hlSpecial {
+    color: var(--color-hl-special);
+}
+
+/* Parameters - kept uncolored by default for clarity */
+.hlParameter {
+    color: inherit;
+}
+
+/* Comments: // a comment */
 .hlComment {
-    color: #6d7886;
+    color: var(--color-hl-comment);
     font-style: italic;
+}
+
+/* Punctuation: {}, (), [] */
+.hlPunctuation {
+    color: var(--color-hl-punctuation);
+}
+
+/* --- Diagnostics Classes --- */
+
+/* Fine-grained, verbose logging */
+.hlTrace {
+    color: var(--color-hl-trace);
+}
+
+/* Development-time debugging */
+.hlDebug {
+    color: var(--color-hl-debug);
+}
+
+/* Informational messages */
+.hlInfo {
+    color: var(--color-hl-info);
+}
+
+/* Important, but not urgent, info */
+.hlNotice {
+    color: var(--color-hl-notice);
+}
+
+/* Successful operations */
+.hlSuccess {
+    color: var(--color-hl-success);
+    font-weight: bold;
+}
+
+/* Potential issues */
+.hlWarning {
+    color: var(--color-hl-warning);
+    font-weight: bold;
+}
+
+/* Errors that don't halt execution */
+.hlError {
+    color: var(--color-hl-error);
+    font-weight: bold;
+}
+
+/* Critical, app-breaking errors */
+.hlFatal {
+    color: var(--color-hl-fatal);
+    font-weight: bold;
+    text-decoration: underline;
+    text-decoration-color: var(--color-hl-fatal);
+}
+
+/* De-emphasized text */
+.hlMuted {
+    color: var(--color-hl-muted);
 }

@@ -32,11 +32,11 @@ export default function Hero() {
                             <span className={`${terminal.windowBtn} ${terminal.btnGreen}`}/>
                         </div>
                         <pre className={terminal.codeBlock}>
-                            <span className={terminal.hlBlue}>#[strut::main]</span>
+                            <span className={terminal.hlAttribute}>#[strut::main]</span>
                             {"\n"}
-                            <span className={terminal.hlPurple}>async</span>{" "}
-                            <span className={terminal.hlPurple}>fn</span>{" "}
-                            <span className={terminal.hlYellow}>main</span>()
+                            <span className={terminal.hlKeyword}>async</span>{" "}
+                            <span className={terminal.hlKeyword}>fn</span>{" "}
+                            <span className={terminal.hlFunction}>main</span>()
                             {" {"}
                             {"\n    "}
                             <span className={terminal.hlComment}>// [x] async (tokio)</span>

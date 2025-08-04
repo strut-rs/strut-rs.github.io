@@ -88,14 +88,12 @@ const config: Config = {
             items: [
                 {
                     label: 'Quickstart',
-                    type: 'doc',
-                    docId: 'quickstart/index',
+                    to: 'docs/quickstart',
                     position: 'left',
                 },
                 {
                     label: 'Docs',
-                    type: 'doc',
-                    docId: 'intro',
+                    to: 'docs',
                     position: 'left',
                 },
                 {
