@@ -4,6 +4,8 @@ sidebar_position: 1
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import {ShellArgument, ShellCommand, ShellOutput, ShellPrompt, ShellVariable, LogMuted, LogInfo, LogSuccess, LogMain} from '@site/src/components/Highlight';
+import Terminal from '@site/src/components/Terminal';
 
 # Quickstart
 
@@ -36,7 +38,15 @@ async fn main() {
 
 Run the application with `cargo run`:
 
-![Output of `cargo run` with defaults](./intro-01.svg)
+<Terminal>
+    <ShellPrompt>$</ShellPrompt>
+    {" "}
+    <ShellCommand>cargo</ShellCommand>
+    {" "}
+    <ShellArgument>run</ShellArgument>
+
+    {"\n"}<ShellOutput>Running app...</ShellOutput>
+</Terminal>
 
 Impressive, right?
 Just kidding, it gets better.
@@ -48,21 +58,29 @@ The application name (same as everything in `AppConfig`) has a reasonable defaul
 Let’s configure the name explicitly (under the hood, the [`config`][crates-io-config] crate is used):
 
 <Tabs>
-<TabItem value="YAML">
-```yaml title="config/app.yaml"
-name: app-backend
-```
-</TabItem>
-<TabItem value="TOML">
-```toml title="config/app.toml"
-name = "app-backend"
-```
-</TabItem>
+    <TabItem value="YAML">
+        ```yaml title="config/app.yaml"
+        name: app-backend
+        ```
+    </TabItem>
+    <TabItem value="TOML">
+        ```toml title="config/app.toml"
+        name = "app-backend"
+        ```
+    </TabItem>
 </Tabs>
 
 Now, when we `cargo run`, the output is:
 
-![Output of `cargo run` with config file](./intro-02.svg)
+<Terminal>
+    <ShellPrompt>$</ShellPrompt>
+    {" "}
+    <ShellCommand>cargo</ShellCommand>
+    {" "}
+    <ShellArgument>run</ShellArgument>
+
+    {"\n"}<ShellOutput>Running app-backend...</ShellOutput>
+</Terminal>
 
 ## Override configuration
 
@@ -72,7 +90,17 @@ We can also set/override all config entries with environment variables:
 APP_NAME=custom-app cargo run
 ```
 
-![Output of `cargo run` with environment override](./intro-03.svg)
+<Terminal>
+    <ShellPrompt>$</ShellPrompt>
+    {" "}
+    <ShellVariable>APP_NAME=custom-app</ShellVariable>
+    {" "}
+    <ShellCommand>cargo</ShellCommand>
+    {" "}
+    <ShellArgument>run</ShellArgument>
+
+    {"\n"}<ShellOutput>Running custom-app...</ShellOutput>
+</Terminal>
 
 Nothing too exciting so far.
 
@@ -107,7 +135,68 @@ async fn main() {
 
 Now, `cargo run` outputs something more serious, and perhaps familiar:
 
-![Output of `cargo run` with `tracing` feature](./intro-04.svg)
+<Terminal width='95%' wrap={true} fontSize='0.75em'>
+    <ShellPrompt>$</ShellPrompt>
+    {" "}
+    <ShellCommand>cargo</ShellCommand>
+    {" "}
+    <ShellArgument>run</ShellArgument>
+
+    {"\n"}
+    <LogMuted>1969-10-29T22:30:00.010227Z</LogMuted>
+    {"  "}
+    <LogInfo>INFO</LogInfo>
+    {" "}
+    <LogMain>ThreadId(01)</LogMain>
+    {" "}
+    <LogMuted>strut::launchpad::wiring::preflight:</LogMuted>
+    {" "}
+    <LogMain>Starting app-backend with profile 'dev' (default replica, lifetime ID 'xbr-dwxn-klp')</LogMain>
+
+    {"\n"}
+    <LogMuted>1969-10-29T22:30:00.010296Z</LogMuted>
+    {"  "}
+    <LogInfo>INFO</LogInfo>
+    {" "}
+    <LogMain>ThreadId(01)</LogMain>
+    {" "}
+    <LogMuted>demo_app:</LogMuted>
+    {" "}
+    <LogMain>Running app-backend...</LogMain>
+
+    {"\n"}
+    <LogMuted>1969-10-29T22:30:00.010308Z</LogMuted>
+    {"  "}
+    <LogInfo>INFO</LogInfo>
+    {" "}
+    <LogMain>ThreadId(01)</LogMain>
+    {" "}
+    <LogMuted>strut_core::context:</LogMuted>
+    {" "}
+    <LogMain>Terminating application context</LogMain>
+
+    {"\n"}
+    <LogMuted>1969-10-29T22:30:00.010325Z</LogMuted>
+    {"  "}
+    <LogInfo>INFO</LogInfo>
+    {" "}
+    <LogMain>ThreadId(01)</LogMain>
+    {" "}
+    <LogMuted>strut_core::spindown::registry:</LogMuted>
+    {" "}
+    <LogMain>Spindown initiated</LogMain>
+
+    {"\n"}
+    <LogMuted>1969-10-29T22:30:00.010352Z</LogMuted>
+    {"  "}
+    <LogInfo>INFO</LogInfo>
+    {" "}
+    <LogMain>ThreadId(01)</LogMain>
+    {" "}
+    <LogMuted>strut_core::spindown::registry:</LogMuted>
+    {" "}
+    <LogMain>Spindown completed</LogMain>
+</Terminal>
 
 A few things to notice:
 
@@ -127,18 +216,18 @@ cargo add strut --features tracing-json
 Add a `prod`-specific config file following the naming convention:
 
 <Tabs>
-<TabItem value="YAML">
-```yaml title="config/app.prod.yaml"
-tracing:
-    flavor: json # “flavour” works too :)
-```
-</TabItem>
-<TabItem value="TOML">
-```toml title="config/app.prod.toml"
-[tracing]
-flavor = "json" # “flavour” works too :)
-```
-</TabItem>
+    <TabItem value="YAML">
+        ```yaml title="config/app.prod.yaml"
+        tracing:
+            flavor: json # “flavour” works too :)
+        ```
+    </TabItem>
+    <TabItem value="TOML">
+        ```toml title="config/app.prod.toml"
+        [tracing]
+        flavor = "json" # “flavour” works too :)
+        ```
+    </TabItem>
 </Tabs>
 
 Nothing will change for `cargo run`.
@@ -150,4 +239,16 @@ APP_PROFILE=prod cargo run
 
 The output is now fit for streaming structured logs:
 
-![Output of `cargo run` with `tracing-json` feature](./intro-05.svg)
+<Terminal width='95%' wrap={true} fontSize='0.75em'>
+    <ShellPrompt>$</ShellPrompt>
+    {" "}
+    <ShellCommand>cargo</ShellCommand>
+    {" "}
+    <ShellArgument>run</ShellArgument>
+
+    {"\n"}<LogMuted>{'{"timestamp":"1969-10-29T22:30:00.937059Z","level":"INFO","fields":{"message":"Starting app-backend with profile \'prod\' (default replica, lifetime ID \'rli-dgff-ysd\')"},"target":"strut::launchpad::wiring::preflight","threadId":"ThreadId(1)"}'}</LogMuted>
+    {"\n"}<LogMuted>{'{"timestamp":"1969-10-29T22:30:00.937169Z","level":"INFO","fields":{"message":"Running app-backend..."},"target":"strut_dummy","threadId":"ThreadId(1)"}'}</LogMuted>
+    {"\n"}<LogMuted>{'{"timestamp":"1969-10-29T22:30:00.937178Z","level":"INFO","fields":{"message":"Terminating application context"},"target":"strut_core::context","threadId":"ThreadId(1)"}'}</LogMuted>
+    {"\n"}<LogMuted>{'{"timestamp":"1969-10-29T22:30:00.937186Z","level":"INFO","fields":{"message":"Spindown initiated"},"target":"strut_core::spindown::registry","threadId":"ThreadId(1)"}'}</LogMuted>
+    {"\n"}<LogMuted>{'{"timestamp":"1969-10-29T22:30:00.937200Z","level":"INFO","fields":{"message":"Spindown completed"},"target":"strut_core::spindown::registry","threadId":"ThreadId(1)"}'}</LogMuted>
+</Terminal>

@@ -83,7 +83,7 @@ const config: Config = {
             title: 'Home',
             logo: {
                 alt: 'Strut Logo',
-                src: 'img/logo.png',
+                src: 'img/logo.svg',
             },
             items: [
                 {

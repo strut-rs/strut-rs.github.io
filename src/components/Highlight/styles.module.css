@@ -1,0 +1,287 @@
+:root {
+    /* --- 1. Raw Color Palette --- */
+
+    /* Base Colors */
+    --raw-red: #bf616a;
+    --raw-yellow: #ebcb8b;
+    --raw-green: #a3be8c;
+    --raw-blue: #81a1c1;
+    --raw-purple: #b48ead;
+    --raw-cyan: #88c0d0;
+    --raw-orange: #d08770;
+    --raw-teal: #8fbcbb;
+    --raw-light: #d3d6db;
+    --raw-gray: #6d7886;
+
+    /* Vivid Colors (for emphasis) */
+    --raw-vivid-red: #f45f5b;
+    --raw-vivid-yellow: #fdbc40;
+    --raw-vivid-green: #34c84a;
+    --raw-vivid-blue: #5e9ce6;
+    --raw-vivid-purple: #c592e0;
+    --raw-vivid-cyan: #96d8e8;
+    --raw-vivid-orange: #e69875;
+    --raw-vivid-teal: #9cd4d3;
+    --raw-vivid-light: #e5e9f0;
+    --raw-vivid-gray: #8190a0;
+
+    /* Special Colors (one-offs) */
+    --raw-special-dark: #434a54;
+
+    /* --- 2. Semantic Color Mapping --- */
+
+    /* Group: prog (Programming Languages) */
+    --color-prog-keyword: var(--raw-blue);
+    --color-prog-string: var(--raw-green);
+    --color-prog-literal: var(--raw-purple);
+    --color-prog-function: var(--raw-cyan);
+    --color-prog-definition: var(--raw-teal);
+    --color-prog-property: var(--raw-yellow);
+    --color-prog-variable: var(--raw-vivid-light);
+    --color-prog-operator: var(--raw-blue);
+    --color-prog-special: var(--raw-orange);
+    --color-prog-comment: var(--raw-gray);
+    --color-prog-punctuation: var(--raw-light);
+
+    /* Group: markup (HTML, XML, etc.) */
+    --color-markup-tag: var(--raw-blue);
+    --color-markup-name: var(--raw-teal);
+    --color-markup-attr: var(--raw-yellow);
+    --color-markup-value: var(--raw-green);
+    --color-markup-entity: var(--raw-orange);
+    --color-markup-comment: var(--raw-gray);
+
+    /* Group: shell (Bash, Zsh, etc.) */
+    --color-shell-prompt: var(--raw-gray);
+    --color-shell-command: var(--raw-cyan);
+    --color-shell-argument: var(--raw-light);
+    --color-shell-option: var(--raw-teal);
+    --color-shell-string: var(--raw-green);
+    --color-shell-variable: var(--raw-orange);
+    --color-shell-operator: var(--raw-blue);
+    --color-shell-comment: var(--raw-gray);
+
+    /* Group: log (Logging & Diagnostics) */
+    --color-log-trace: var(--raw-gray);
+    --color-log-debug: var(--raw-purple);
+    --color-log-info: var(--raw-cyan);
+    --color-log-notice: var(--raw-blue);
+    --color-log-success: var(--raw-vivid-green);
+    --color-log-warning: var(--raw-vivid-yellow);
+    --color-log-error: var(--raw-red);
+    --color-log-fatal: var(--raw-vivid-red);
+
+    --color-log-main: var(--raw-vivid-light);
+    --color-log-muted: var(--raw-vivid-gray);
+    --color-log-subdued: var(--raw-special-dark);
+}
+
+/* --- 3. Syntax Highlighting Classes --- */
+
+/* --- Prog Classes --- */
+
+/* Keywords: if, for, import, return */
+.ProgKeyword {
+    color: var(--color-prog-keyword);
+}
+
+/* String literals: "hello", `template` */
+.ProgString {
+    color: var(--color-prog-string);
+}
+
+/* Literals: 123, true, null, const FOO */
+.ProgLiteral {
+    color: var(--color-prog-literal);
+}
+
+/* Functions & methods: myFunction() */
+.ProgFunction {
+    color: var(--color-prog-function);
+}
+
+/* Definitions: class, interface, type */
+.ProgDefinition {
+    color: var(--color-prog-definition);
+}
+
+/* Object properties & members */
+.ProgProperty {
+    color: var(--color-prog-property);
+}
+
+/* Variable declarations and usage */
+.ProgVariable {
+    color: var(--color-prog-variable);
+}
+
+/* Operators: +, -, = */
+.ProgOperator {
+    color: var(--color-prog-operator);
+}
+
+/* Special tokens: @decorators, regex */
+.ProgSpecial {
+    color: var(--color-prog-special);
+}
+
+/* Function parameters */
+.ProgParameter {
+    color: inherit;
+}
+
+/* Brackets, commas, etc: {}, (), [] */
+.ProgPunctuation {
+    color: var(--color-prog-punctuation);
+}
+
+/* Comments: // a comment */
+.ProgComment {
+    color: var(--color-prog-comment);
+    font-style: italic;
+}
+
+/* --- Markup Classes --- */
+
+/* Punctuation for tags: <, >, /> */
+.MarkupTag {
+    color: var(--color-markup-tag);
+}
+
+/* Tag names: div, p, strong */
+.MarkupName {
+    color: var(--color-markup-name);
+}
+
+/* Attribute names: class, id, href */
+.MarkupAttribute {
+    color: var(--color-markup-attr)
+
+    /* Attribute values: "main", "true" */;
+}
+
+.MarkupValue {
+    color: var(--color-markup-value);
+}
+
+/* HTML entities: &amp;, &lt; */
+.MarkupEntity {
+    color: var(--color-markup-entity);
+}
+
+/* Comments: <!-- a comment --> */
+.MarkupComment {
+    color: var(--color-markup-comment);
+    font-style: italic;
+}
+
+/* --- Shell Classes --- */
+
+/* The shell prompt itself: $, >, # */
+.ShellPrompt {
+    color: var(--color-shell-prompt);
+}
+
+/* Commands: ls, cd, git */
+.ShellCommand {
+    color: var(--color-shell-command);
+}
+
+/* Subcommands or arguments: run, commit */
+.ShellArgument {
+    color: var(--color-shell-argument);
+}
+
+/* Options and flags: -l, --all */
+.ShellOption {
+    color: var(--color-shell-option);
+}
+
+/* String literals: "my-file.txt" */
+.ShellString {
+    color: var(--color-shell-string);
+}
+
+/* Variables: $PATH, ${HOME} */
+.ShellVariable {
+    color: var(--color-shell-variable);
+}
+
+/* Operators and redirects: |, >, && */
+.ShellOperator {
+    color: var(--color-shell-operator);
+}
+
+/* Command output */
+.ShellOutput {
+    color: inherit;
+}
+
+/* Comments: # a comment */
+.ShellComment {
+    color: var(--color-shell-comment);
+    font-style: italic;
+}
+
+/* --- Log Classes --- */
+
+/* Fine-grained, verbose logging */
+.LogTrace {
+    color: var(--color-log-trace);
+}
+
+/* Development-time debugging */
+.LogDebug {
+    color: var(--color-log-debug);
+}
+
+/* Informational messages */
+.LogInfo {
+    color: var(--color-log-info);
+}
+
+/* Important, but not urgent, info */
+.LogNotice {
+    color: var(--color-log-notice);
+}
+
+/* Successful operations */
+.LogSuccess {
+    color: var(--color-log-success);
+    font-weight: bold;
+}
+
+/* Potential issues */
+.LogWarning {
+    color: var(--color-log-warning);
+    font-weight: bold;
+}
+
+/* Errors that don't halt execution */
+.LogError {
+    color: var(--color-log-error);
+    font-weight: bold;
+}
+
+/* Critical, app-breaking errors */
+.LogFatal {
+    color: var(--color-log-fatal);
+    font-weight: bold;
+    text-decoration: underline;
+    text-decoration-color: var(--color-log-fatal);
+}
+
+/* Emphasized text */
+.LogMain {
+    color: var(--color-log-main);
+}
+
+/* De-emphasized text */
+.LogMuted {
+    color: var(--color-log-muted);
+}
+
+/* Very de-emphasized text */
+.LogSubdued {
+    color: var(--color-log-subdued);
+}

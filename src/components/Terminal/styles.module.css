@@ -1,0 +1,162 @@
+:root {
+    /* Window & Background */
+    --color-window-bg: #2d323a;
+    --color-window-shadow: #0008;
+
+    /* Window Buttons */
+    --color-btn-red: #f45f5b;
+    --color-btn-yellow: #fdbc40;
+    --color-btn-green: #34c84a;
+
+    /* Default Code Color */
+    --color-code: #e0e0e0;
+}
+
+.terminal {
+    background: var(--color-window-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 32px var(--color-window-shadow);
+    padding-bottom: 24px;
+    width: 100%; /* Default width, can be overridden by `width` prop */
+}
+
+.mdx {
+    width: 80%;
+    margin: 2rem auto;
+}
+
+.terminalHeader {
+    display: flex;
+    gap: 10px;
+    padding: 18px 0 0 18px;
+}
+
+.terminalBtn {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.terminalButtonRed {
+    background: var(--color-btn-red);
+}
+
+.terminalButtonYellow {
+    background: var(--color-btn-yellow);
+}
+
+.terminalButtonGreen {
+    background: var(--color-btn-green);
+}
+
+.terminalCodeBlock {
+    margin: 0;
+    padding: 24px 24px 0 24px;
+    font-family: 'Fira Code', monospace;
+    color: var(--color-code);
+    background: none;
+    /* Default (m) size values */
+    font-size: 1em;
+    line-height: 1.6;
+}
+
+/* Styles for wrapping content */
+.wrapContent {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* Styles for non-wrapping, scrollable content (default) */
+.noWrapContent {
+    white-space: pre;
+    overflow-x: auto;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+.noWrapContent::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+
+/* --- Size Variants --- */
+
+/* Size: xs */
+.sizeXs {
+    border-radius: 6px;
+    box-shadow: 0 2px 16px var(--color-window-shadow);
+    padding-bottom: 12px;
+}
+.sizeXs .terminalHeader {
+    gap: 5px;
+    padding: 9px 0 0 9px;
+}
+.sizeXs .terminalBtn {
+    width: 8px;
+    height: 8px;
+}
+.sizeXs .terminalCodeBlock {
+    padding: 12px 12px 0 12px;
+    font-size: 0.75em;
+    line-height: 1.5;
+}
+
+/* Size: s */
+.sizeS {
+    border-radius: 9px;
+    box-shadow: 0 3px 24px var(--color-window-shadow);
+    padding-bottom: 18px;
+}
+.sizeS .terminalHeader {
+    gap: 7px;
+    padding: 14px 0 0 14px;
+}
+.sizeS .terminalBtn {
+    width: 12px;
+    height: 12px;
+}
+.sizeS .terminalCodeBlock {
+    padding: 18px 18px 0 18px;
+    font-size: 0.875em;
+    line-height: 1.55;
+}
+
+/* Size: l */
+.sizeL {
+    border-radius: 15px;
+    box-shadow: 0 6px 40px var(--color-window-shadow);
+    padding-bottom: 30px;
+}
+.sizeL .terminalHeader {
+    gap: 12px;
+    padding: 22px 0 0 22px;
+}
+.sizeL .terminalBtn {
+    width: 20px;
+    height: 20px;
+}
+.sizeL .terminalCodeBlock {
+    padding: 30px 30px 0 30px;
+    font-size: 1.125em;
+    line-height: 1.65;
+}
+
+/* Size: xl */
+.sizeXl {
+    border-radius: 18px;
+    box-shadow: 0 8px 48px var(--color-window-shadow);
+    padding-bottom: 36px;
+}
+.sizeXl .terminalHeader {
+    gap: 15px;
+    padding: 27px 0 0 27px;
+}
+.sizeXl .terminalBtn {
+    width: 24px;
+    height: 24px;
+}
+.sizeXl .terminalCodeBlock {
+    padding: 36px 36px 0 36px;
+    font-size: 1.25em;
+    line-height: 1.7;
+}

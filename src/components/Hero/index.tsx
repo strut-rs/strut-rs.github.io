@@ -1,7 +1,8 @@
 import React from "react";
 import styles from "./styles.module.css";
-import terminal from "./terminal.module.css";
 import Link from "@docusaurus/Link";
+import Terminal from "@site/src/components/Terminal";
+import * as Hl from "@site/src/components/Highlight";
 
 export default function Hero() {
     return (
@@ -24,42 +25,22 @@ export default function Hero() {
                         </Link>
                     </div>
                 </div>
-                <div className={terminal.body}>
-                    <div className={terminal.window}>
-                        <div className={terminal.windowHeader}>
-                            <span className={`${terminal.windowBtn} ${terminal.btnRed}`}/>
-                            <span className={`${terminal.windowBtn} ${terminal.btnYellow}`}/>
-                            <span className={`${terminal.windowBtn} ${terminal.btnGreen}`}/>
-                        </div>
-                        <pre className={terminal.codeBlock}>
-                            <span className={terminal.hlAttribute}>#[strut::main]</span>
-                            {"\n"}
-                            <span className={terminal.hlKeyword}>async</span>{" "}
-                            <span className={terminal.hlKeyword}>fn</span>{" "}
-                            <span className={terminal.hlFunction}>main</span>()
-                            {" {"}
-                            {"\n    "}
-                            <span className={terminal.hlComment}>// [x] async (tokio)</span>
-                            {"\n    "}
-                            <span className={terminal.hlComment}>// [x] external config</span>
-                            {"\n    "}
-                            <span className={terminal.hlComment}>// [x] graceful shutdown</span>
-                            {"\n\n    "}
-                            <span className={terminal.hlComment}>// + optionally:</span>
-                            {"\n    "}
-                            <span className={terminal.hlComment}>// [ ] logging / tracing</span>
-                            {"\n    "}
-                            <span className={terminal.hlComment}>// [ ] database (sqlx)</span>
-                            {"\n    "}
-                            <span className={terminal.hlComment}>// [ ] rabbitmq (lapin)</span>
-                            {"\n    "}
-                            <span className={terminal.hlComment}>// [ ] sentry</span>
-                            {"\n    "}
-                            <span className={terminal.hlComment}>// [ ] custom integrations</span>
-                            {"\n"}
-                            {"}"}
-                        </pre>
-                    </div>
+                <div className={styles.right}>
+                    <Terminal size='m' width='360px'>
+                        <Hl.ProgSpecial>#[strut::main]</Hl.ProgSpecial>
+                        {"\n"}<Hl.ProgKeyword>async fn</Hl.ProgKeyword>{" "}<Hl.ProgFunction>main</Hl.ProgFunction>{"() {"}
+                        {"\n    "}<Hl.ProgComment>// [x] async (tokio)</Hl.ProgComment>
+                        {"\n    "}<Hl.ProgComment>// [x] external config</Hl.ProgComment>
+                        {"\n    "}<Hl.ProgComment>// [x] graceful shutdown</Hl.ProgComment>
+                        {"\n"}
+                        {"\n    "}<Hl.ProgComment>// + optionally:</Hl.ProgComment>
+                        {"\n    "}<Hl.ProgComment>// [ ] logging / tracing</Hl.ProgComment>
+                        {"\n    "}<Hl.ProgComment>// [ ] database (sqlx)</Hl.ProgComment>
+                        {"\n    "}<Hl.ProgComment>// [ ] rabbitmq (lapin)</Hl.ProgComment>
+                        {"\n    "}<Hl.ProgComment>// [ ] sentry</Hl.ProgComment>
+                        {"\n    "}<Hl.ProgComment>// [ ] custom integrations</Hl.ProgComment>
+                        {"\n}"}
+                    </Terminal>
                 </div>
             </div>
         </section>
