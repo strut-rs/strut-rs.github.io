@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./styles.module.css";
 import Link from "@docusaurus/Link";
 import Terminal from "@site/src/components/Terminal";
-import * as Hl from "@site/src/components/Highlight";
+import {Prog} from "@site/src/components/Terminal/Highlight";
 
 export default function Hero() {
     return (
@@ -27,18 +27,18 @@ export default function Hero() {
                 </div>
                 <div className={styles.right}>
                     <Terminal size='m' width='360px'>
-                        <Hl.ProgSpecial>#[strut::main]</Hl.ProgSpecial>
-                        {"\n"}<Hl.ProgKeyword>async fn</Hl.ProgKeyword>{" "}<Hl.ProgFunction>main</Hl.ProgFunction>{"() {"}
-                        {"\n    "}<Hl.ProgComment>// [x] async (tokio)</Hl.ProgComment>
-                        {"\n    "}<Hl.ProgComment>// [x] external config</Hl.ProgComment>
-                        {"\n    "}<Hl.ProgComment>// [x] graceful shutdown</Hl.ProgComment>
+                        <Prog.Special>#[strut::main]</Prog.Special>
+                        {"\n"}<Prog.Keyword>async fn</Prog.Keyword>{" "}<Prog.Function>main</Prog.Function>{"() {"}
+                        {"\n    "}<Prog.Comment>// [x] async (tokio)</Prog.Comment>
+                        {"\n    "}<Prog.Comment>// [x] external config</Prog.Comment>
+                        {"\n    "}<Prog.Comment>// [x] graceful shutdown</Prog.Comment>
                         {"\n"}
-                        {"\n    "}<Hl.ProgComment>// + optionally:</Hl.ProgComment>
-                        {"\n    "}<Hl.ProgComment>// [ ] logging / tracing</Hl.ProgComment>
-                        {"\n    "}<Hl.ProgComment>// [ ] database (sqlx)</Hl.ProgComment>
-                        {"\n    "}<Hl.ProgComment>// [ ] rabbitmq (lapin)</Hl.ProgComment>
-                        {"\n    "}<Hl.ProgComment>// [ ] sentry</Hl.ProgComment>
-                        {"\n    "}<Hl.ProgComment>// [ ] custom integrations</Hl.ProgComment>
+                        {"\n    "}<Prog.Comment>// + optionally:</Prog.Comment>
+                        {"\n    "}<Prog.Comment>// [ ] logging / tracing</Prog.Comment>
+                        {"\n    "}<Prog.Comment>// [ ] database (sqlx)</Prog.Comment>
+                        {"\n    "}<Prog.Comment>// [ ] rabbitmq (lapin)</Prog.Comment>
+                        {"\n    "}<Prog.Comment>// [ ] sentry</Prog.Comment>
+                        {"\n    "}<Prog.Comment>// [ ] custom integrations</Prog.Comment>
                         {"\n}"}
                     </Terminal>
                 </div>

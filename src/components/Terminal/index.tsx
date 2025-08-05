@@ -85,7 +85,7 @@ export default function Terminal(
             className={clsx(
                 styles.terminal,
                 sizeToClassMap[size],
-                mdx && styles.mdx,
+                mdx && styles.terminalMdx,
                 className,
             )}
             style={terminalStyle}>
@@ -97,7 +97,7 @@ export default function Terminal(
             <pre
                 className={clsx(
                     styles.terminalCodeBlock,
-                    wrap ? styles.wrapContent : styles.noWrapContent,
+                    wrap ? styles.terminalWrap : styles.terminalNoWrap,
                 )}
                 style={codeBlockStyle}
             >

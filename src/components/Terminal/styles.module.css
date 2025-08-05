@@ -1,26 +1,112 @@
-:root {
-    /* Window & Background */
-    --color-window-bg: #2d323a;
-    --color-window-shadow: #0008;
+.terminal {
+    /* ================================================== */
+    /* == WINDOW FRAME ================================== */
+    /* ================================================== */
 
-    /* Window Buttons */
-    --color-btn-red: #f45f5b;
-    --color-btn-yellow: #fdbc40;
-    --color-btn-green: #34c84a;
+    /* Window & background */
+    --site-terminal-color-window-bg: #2d323a;
+    --site-terminal-color-window-shadow: #0008;
 
-    /* Default Code Color */
-    --color-code: #e0e0e0;
+    /* Buttons */
+    --site-terminal-color-btn-red: #f45f5b;
+    --site-terminal-color-btn-yellow: #fdbc40;
+    --site-terminal-color-btn-green: #34c84a;
+
+    /* Default code color */
+    --site-terminal-color-code: #e0e0e0;
+
+    /* ================================================== */
+    /* == CODE BLOCK ==================================== */
+    /* ================================================== */
+
+    /* --- 1. Raw color palette --- */
+
+    /* Base colors */
+    --site--highlight-raw-red: #bf616a;
+    --site--highlight-raw-yellow: #ebcb8b;
+    --site--highlight-raw-green: #a3be8c;
+    --site--highlight-raw-blue: #81a1c1;
+    --site--highlight-raw-purple: #b48ead;
+    --site--highlight-raw-cyan: #88c0d0;
+    --site--highlight-raw-orange: #d08770;
+    --site--highlight-raw-teal: #8fbcbb;
+    --site--highlight-raw-light: #d3d6db;
+    --site--highlight-raw-gray: #6d7886;
+
+    /* Vivid colors (for emphasis) */
+    --site--highlight-raw-vivid-red: #f45f5b;
+    --site--highlight-raw-vivid-yellow: #fdbc40;
+    --site--highlight-raw-vivid-green: #34c84a;
+    --site--highlight-raw-vivid-blue: #5e9ce6;
+    --site--highlight-raw-vivid-purple: #c592e0;
+    --site--highlight-raw-vivid-cyan: #96d8e8;
+    --site--highlight-raw-vivid-orange: #e69875;
+    --site--highlight-raw-vivid-teal: #9cd4d3;
+    --site--highlight-raw-vivid-light: #e5e9f0;
+    --site--highlight-raw-vivid-gray: #8190a0;
+
+    /* Special colors (one-offs) */
+    --site--highlight-raw-special-dark: #434a54;
+
+    /* --- 2. Semantic color mapping --- */
+
+    /* Group: prog (programming languages) */
+    --site-highlight-prog-keyword: var(--site--highlight-raw-blue);
+    --site-highlight-prog-string: var(--site--highlight-raw-green);
+    --site-highlight-prog-literal: var(--site--highlight-raw-purple);
+    --site-highlight-prog-function: var(--site--highlight-raw-cyan);
+    --site-highlight-prog-definition: var(--site--highlight-raw-teal);
+    --site-highlight-prog-property: var(--site--highlight-raw-yellow);
+    --site-highlight-prog-variable: var(--site--highlight-raw-vivid-light);
+    --site-highlight-prog-operator: var(--site--highlight-raw-blue);
+    --site-highlight-prog-special: var(--site--highlight-raw-orange);
+    --site-highlight-prog-comment: var(--site--highlight-raw-gray);
+    --site-highlight-prog-punctuation: var(--site--highlight-raw-light);
+
+    /* Group: markup (HTML, XML, etc.) */
+    --site-highlight-markup-tag: var(--site--highlight-raw-blue);
+    --site-highlight-markup-name: var(--site--highlight-raw-teal);
+    --site-highlight-markup-attr: var(--site--highlight-raw-yellow);
+    --site-highlight-markup-value: var(--site--highlight-raw-green);
+    --site-highlight-markup-entity: var(--site--highlight-raw-orange);
+    --site-highlight-markup-comment: var(--site--highlight-raw-gray);
+
+    /* Group: shell (Bash, Zsh, etc.) */
+    --site-highlight-shell-prompt: var(--site--highlight-raw-gray);
+    --site-highlight-shell-command: var(--site--highlight-raw-cyan);
+    --site-highlight-shell-argument: var(--site--highlight-raw-light);
+    --site-highlight-shell-option: var(--site--highlight-raw-teal);
+    --site-highlight-shell-string: var(--site--highlight-raw-green);
+    --site-highlight-shell-variable: var(--site--highlight-raw-orange);
+    --site-highlight-shell-operator: var(--site--highlight-raw-blue);
+    --site-highlight-shell-comment: var(--site--highlight-raw-gray);
+
+    /* Group: log (logging & diagnostics) */
+    --site-highlight-log-trace: var(--site--highlight-raw-gray);
+    --site-highlight-log-debug: var(--site--highlight-raw-purple);
+    --site-highlight-log-info: var(--site--highlight-raw-cyan);
+    --site-highlight-log-notice: var(--site--highlight-raw-blue);
+    --site-highlight-log-success: var(--site--highlight-raw-vivid-green);
+    --site-highlight-log-warning: var(--site--highlight-raw-vivid-yellow);
+    --site-highlight-log-error: var(--site--highlight-raw-red);
+    --site-highlight-log-fatal: var(--site--highlight-raw-vivid-red);
+
+    --site-highlight-log-main: var(--site--highlight-raw-vivid-light);
+    --site-highlight-log-muted: var(--site--highlight-raw-vivid-gray);
+    --site-highlight-log-subdued: var(--site--highlight-raw-special-dark);
 }
+
+/* --- Terminal styling --- */
 
 .terminal {
-    background: var(--color-window-bg);
+    background: var(--site-terminal-color-window-bg);
     border-radius: 12px;
-    box-shadow: 0 4px 32px var(--color-window-shadow);
+    box-shadow: 0 4px 32px var(--site-terminal-color-window-shadow);
     padding-bottom: 24px;
-    width: 100%; /* Default width, can be overridden by `width` prop */
+    width: 100%; /* default width, can be overridden by `width` prop */
 }
 
-.mdx {
+.terminalMdx {
     width: 80%;
     margin: 2rem auto;
 }
@@ -39,62 +125,64 @@
 }
 
 .terminalButtonRed {
-    background: var(--color-btn-red);
+    background: var(--site-terminal-color-btn-red);
 }
 
 .terminalButtonYellow {
-    background: var(--color-btn-yellow);
+    background: var(--site-terminal-color-btn-yellow);
 }
 
 .terminalButtonGreen {
-    background: var(--color-btn-green);
+    background: var(--site-terminal-color-btn-green);
 }
 
 .terminalCodeBlock {
     margin: 0;
     padding: 24px 24px 0 24px;
     font-family: 'Fira Code', monospace;
-    color: var(--color-code);
+    color: var(--site-terminal-color-code);
     background: none;
-    /* Default (m) size values */
+
+    /* Default size values */
     font-size: 1em;
     line-height: 1.6;
 }
 
-/* Styles for wrapping content */
-.wrapContent {
+.terminalWrap {
     white-space: pre-wrap;
     word-break: break-word;
 }
 
-/* Styles for non-wrapping, scrollable content (default) */
-.noWrapContent {
+.terminalNoWrap {
     white-space: pre;
     overflow-x: auto;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 }
-.noWrapContent::-webkit-scrollbar {
+
+.terminalNoWrap::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
 }
 
-
-/* --- Size Variants --- */
+/* --- Terminal styling: size variants --- */
 
 /* Size: xs */
 .sizeXs {
     border-radius: 6px;
-    box-shadow: 0 2px 16px var(--color-window-shadow);
+    box-shadow: 0 2px 16px var(--site-terminal-color-window-shadow);
     padding-bottom: 12px;
 }
+
 .sizeXs .terminalHeader {
     gap: 5px;
     padding: 9px 0 0 9px;
 }
+
 .sizeXs .terminalBtn {
     width: 8px;
     height: 8px;
 }
+
 .sizeXs .terminalCodeBlock {
     padding: 12px 12px 0 12px;
     font-size: 0.75em;
@@ -104,17 +192,20 @@
 /* Size: s */
 .sizeS {
     border-radius: 9px;
-    box-shadow: 0 3px 24px var(--color-window-shadow);
+    box-shadow: 0 3px 24px var(--site-terminal-color-window-shadow);
     padding-bottom: 18px;
 }
+
 .sizeS .terminalHeader {
     gap: 7px;
     padding: 14px 0 0 14px;
 }
+
 .sizeS .terminalBtn {
     width: 12px;
     height: 12px;
 }
+
 .sizeS .terminalCodeBlock {
     padding: 18px 18px 0 18px;
     font-size: 0.875em;
@@ -124,17 +215,20 @@
 /* Size: l */
 .sizeL {
     border-radius: 15px;
-    box-shadow: 0 6px 40px var(--color-window-shadow);
+    box-shadow: 0 6px 40px var(--site-terminal-color-window-shadow);
     padding-bottom: 30px;
 }
+
 .sizeL .terminalHeader {
     gap: 12px;
     padding: 22px 0 0 22px;
 }
+
 .sizeL .terminalBtn {
     width: 20px;
     height: 20px;
 }
+
 .sizeL .terminalCodeBlock {
     padding: 30px 30px 0 30px;
     font-size: 1.125em;
@@ -144,19 +238,232 @@
 /* Size: xl */
 .sizeXl {
     border-radius: 18px;
-    box-shadow: 0 8px 48px var(--color-window-shadow);
+    box-shadow: 0 8px 48px var(--site-terminal-color-window-shadow);
     padding-bottom: 36px;
 }
+
 .sizeXl .terminalHeader {
     gap: 15px;
     padding: 27px 0 0 27px;
 }
+
 .sizeXl .terminalBtn {
     width: 24px;
     height: 24px;
 }
+
 .sizeXl .terminalCodeBlock {
     padding: 36px 36px 0 36px;
     font-size: 1.25em;
     line-height: 1.7;
+}
+
+/* --- Syntax highlighting --- */
+
+/* --- Prog --- */
+
+/* Keywords: if, for, import, return */
+.progKeyword {
+    color: var(--site-highlight-prog-keyword);
+}
+
+/* String literals: "hello", `template` */
+.progString {
+    color: var(--site-highlight-prog-string);
+}
+
+/* Literals: 123, true, null, const FOO */
+.progLiteral {
+    color: var(--site-highlight-prog-literal);
+}
+
+/* Functions & methods: myFunction() */
+.progFunction {
+    color: var(--site-highlight-prog-function);
+}
+
+/* Definitions: class, interface, type */
+.progDefinition {
+    color: var(--site-highlight-prog-definition);
+}
+
+/* Object properties & members */
+.progProperty {
+    color: var(--site-highlight-prog-property);
+}
+
+/* Variable declarations and usage */
+.progVariable {
+    color: var(--site-highlight-prog-variable);
+}
+
+/* Operators: +, -, = */
+.progOperator {
+    color: var(--site-highlight-prog-operator);
+}
+
+/* Special tokens: @decorators, regex */
+.progSpecial {
+    color: var(--site-highlight-prog-special);
+}
+
+/* Function parameters */
+.progParameter {
+    color: inherit;
+}
+
+/* Brackets, commas, etc: {}, (), [] */
+.progPunctuation {
+    color: var(--site-highlight-prog-punctuation);
+}
+
+/* Comments: // a comment */
+.progComment {
+    color: var(--site-highlight-prog-comment);
+    font-style: italic;
+}
+
+/* --- Markup --- */
+
+/* Punctuation for tags: <, >, /> */
+.markupTag {
+    color: var(--site-highlight-markup-tag);
+}
+
+/* Tag names: div, p, strong */
+.markupName {
+    color: var(--site-highlight-markup-name);
+}
+
+/* Attribute names: class, id, href */
+.markupAttribute {
+    color: var(--site-highlight-markup-attr)
+
+    /* Attribute values: "main", "true" */;
+}
+
+.markupValue {
+    color: var(--site-highlight-markup-value);
+}
+
+/* HTML entities: &amp;, &lt; */
+.markupEntity {
+    color: var(--site-highlight-markup-entity);
+}
+
+/* Comments: <!-- a comment --> */
+.markupComment {
+    color: var(--site-highlight-markup-comment);
+    font-style: italic;
+}
+
+/* --- Shell --- */
+
+/* The shell prompt itself: $, >, # */
+.shellPrompt {
+    color: var(--site-highlight-shell-prompt);
+}
+
+/* Commands: ls, cd, git */
+.shellCommand {
+    color: var(--site-highlight-shell-command);
+}
+
+/* Subcommands or arguments: run, commit */
+.shellArgument {
+    color: var(--site-highlight-shell-argument);
+}
+
+/* Options and flags: -l, --all */
+.shellOption {
+    color: var(--site-highlight-shell-option);
+}
+
+/* String literals: "my-file.txt" */
+.shellString {
+    color: var(--site-highlight-shell-string);
+}
+
+/* Variables: $PATH, ${HOME} */
+.shellVariable {
+    color: var(--site-highlight-shell-variable);
+}
+
+/* Operators and redirects: |, >, && */
+.shellOperator {
+    color: var(--site-highlight-shell-operator);
+}
+
+/* Command output */
+.shellOutput {
+    color: inherit;
+}
+
+/* Comments: # a comment */
+.shellComment {
+    color: var(--site-highlight-shell-comment);
+    font-style: italic;
+}
+
+/* --- Log --- */
+
+/* Fine-grained, verbose logging */
+.logTrace {
+    color: var(--site-highlight-log-trace);
+}
+
+/* Development-time debugging */
+.logDebug {
+    color: var(--site-highlight-log-debug);
+}
+
+/* Informational messages */
+.logInfo {
+    color: var(--site-highlight-log-info);
+}
+
+/* Important, but not urgent, info */
+.logNotice {
+    color: var(--site-highlight-log-notice);
+}
+
+/* Successful operations */
+.logSuccess {
+    color: var(--site-highlight-log-success);
+    font-weight: bold;
+}
+
+/* Potential issues */
+.logWarning {
+    color: var(--site-highlight-log-warning);
+    font-weight: bold;
+}
+
+/* Errors that don't halt execution */
+.logError {
+    color: var(--site-highlight-log-error);
+    font-weight: bold;
+}
+
+/* Critical, app-breaking errors */
+.logFatal {
+    color: var(--site-highlight-log-fatal);
+    font-weight: bold;
+    text-decoration: underline;
+    text-decoration-color: var(--site-highlight-log-fatal);
+}
+
+/* Emphasized text */
+.logMain {
+    color: var(--site-highlight-log-main);
+}
+
+/* De-emphasized text */
+.logMuted {
+    color: var(--site-highlight-log-muted);
+}
+
+/* Very de-emphasized text */
+.logSubdued {
+    color: var(--site-highlight-log-subdued);
 }

@@ -4,8 +4,8 @@ sidebar_position: 1
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import {ShellArgument, ShellCommand, ShellOutput, ShellPrompt, ShellVariable, LogMuted, LogInfo, LogSuccess, LogMain} from '@site/src/components/Highlight';
 import Terminal from '@site/src/components/Terminal';
+import {Shell, Log} from '@site/src/components/Terminal/Highlight';
 
 # Quickstart
 
@@ -39,13 +39,13 @@ async fn main() {
 Run the application with `cargo run`:
 
 <Terminal>
-    <ShellPrompt>$</ShellPrompt>
+    <Shell.Prompt>$</Shell.Prompt>
     {" "}
-    <ShellCommand>cargo</ShellCommand>
+    <Shell.Command>cargo</Shell.Command>
     {" "}
-    <ShellArgument>run</ShellArgument>
+    <Shell.Argument>run</Shell.Argument>
 
-    {"\n"}<ShellOutput>Running app...</ShellOutput>
+    {"\n"}<Shell.Output>Running app...</Shell.Output>
 </Terminal>
 
 Impressive, right?
@@ -73,13 +73,13 @@ Let’s configure the name explicitly (under the hood, the [`config`][crates-io-
 Now, when we `cargo run`, the output is:
 
 <Terminal>
-    <ShellPrompt>$</ShellPrompt>
+    <Shell.Prompt>$</Shell.Prompt>
     {" "}
-    <ShellCommand>cargo</ShellCommand>
+    <Shell.Command>cargo</Shell.Command>
     {" "}
-    <ShellArgument>run</ShellArgument>
+    <Shell.Argument>run</Shell.Argument>
 
-    {"\n"}<ShellOutput>Running app-backend...</ShellOutput>
+    {"\n"}<Shell.Output>Running app-backend...</Shell.Output>
 </Terminal>
 
 ## Override configuration
@@ -91,15 +91,15 @@ APP_NAME=custom-app cargo run
 ```
 
 <Terminal>
-    <ShellPrompt>$</ShellPrompt>
+    <Shell.Prompt>$</Shell.Prompt>
     {" "}
-    <ShellVariable>APP_NAME=custom-app</ShellVariable>
+    <Shell.Variable>APP_NAME=custom-app</Shell.Variable>
     {" "}
-    <ShellCommand>cargo</ShellCommand>
+    <Shell.Command>cargo</Shell.Command>
     {" "}
-    <ShellArgument>run</ShellArgument>
+    <Shell.Argument>run</Shell.Argument>
 
-    {"\n"}<ShellOutput>Running custom-app...</ShellOutput>
+    {"\n"}<Shell.Output>Running custom-app...</Shell.Output>
 </Terminal>
 
 Nothing too exciting so far.
@@ -135,67 +135,67 @@ async fn main() {
 
 Now, `cargo run` outputs something more serious, and perhaps familiar:
 
-<Terminal width='95%' wrap={true} fontSize='0.75em'>
-    <ShellPrompt>$</ShellPrompt>
+<Terminal width='95%' wrap={false} fontSize='0.75em'>
+    <Shell.Prompt>$</Shell.Prompt>
     {" "}
-    <ShellCommand>cargo</ShellCommand>
+    <Shell.Command>cargo</Shell.Command>
     {" "}
-    <ShellArgument>run</ShellArgument>
+    <Shell.Argument>run</Shell.Argument>
 
     {"\n"}
-    <LogMuted>1969-10-29T22:30:00.010227Z</LogMuted>
+    <Log.Muted>1969-10-29T22:30:00.010227Z</Log.Muted>
     {"  "}
-    <LogInfo>INFO</LogInfo>
+    <Log.Info>INFO</Log.Info>
     {" "}
-    <LogMain>ThreadId(01)</LogMain>
+    <Log.Main>ThreadId(01)</Log.Main>
     {" "}
-    <LogMuted>strut::launchpad::wiring::preflight:</LogMuted>
+    <Log.Muted>strut::launchpad::wiring::preflight:</Log.Muted>
     {" "}
-    <LogMain>Starting app-backend with profile 'dev' (default replica, lifetime ID 'xbr-dwxn-klp')</LogMain>
+    <Log.Main>Starting app-backend with profile 'dev' (default replica, lifetime ID 'xbr-dwxn-klp')</Log.Main>
 
     {"\n"}
-    <LogMuted>1969-10-29T22:30:00.010296Z</LogMuted>
+    <Log.Muted>1969-10-29T22:30:00.010296Z</Log.Muted>
     {"  "}
-    <LogInfo>INFO</LogInfo>
+    <Log.Info>INFO</Log.Info>
     {" "}
-    <LogMain>ThreadId(01)</LogMain>
+    <Log.Main>ThreadId(01)</Log.Main>
     {" "}
-    <LogMuted>demo_app:</LogMuted>
+    <Log.Muted>demo_app:</Log.Muted>
     {" "}
-    <LogMain>Running app-backend...</LogMain>
+    <Log.Main>Running app-backend...</Log.Main>
 
     {"\n"}
-    <LogMuted>1969-10-29T22:30:00.010308Z</LogMuted>
+    <Log.Muted>1969-10-29T22:30:00.010308Z</Log.Muted>
     {"  "}
-    <LogInfo>INFO</LogInfo>
+    <Log.Info>INFO</Log.Info>
     {" "}
-    <LogMain>ThreadId(01)</LogMain>
+    <Log.Main>ThreadId(01)</Log.Main>
     {" "}
-    <LogMuted>strut_core::context:</LogMuted>
+    <Log.Muted>strut_core::context:</Log.Muted>
     {" "}
-    <LogMain>Terminating application context</LogMain>
+    <Log.Main>Terminating application context</Log.Main>
 
     {"\n"}
-    <LogMuted>1969-10-29T22:30:00.010325Z</LogMuted>
+    <Log.Muted>1969-10-29T22:30:00.010325Z</Log.Muted>
     {"  "}
-    <LogInfo>INFO</LogInfo>
+    <Log.Info>INFO</Log.Info>
     {" "}
-    <LogMain>ThreadId(01)</LogMain>
+    <Log.Main>ThreadId(01)</Log.Main>
     {" "}
-    <LogMuted>strut_core::spindown::registry:</LogMuted>
+    <Log.Muted>strut_core::spindown::registry:</Log.Muted>
     {" "}
-    <LogMain>Spindown initiated</LogMain>
+    <Log.Main>Spindown initiated</Log.Main>
 
     {"\n"}
-    <LogMuted>1969-10-29T22:30:00.010352Z</LogMuted>
+    <Log.Muted>1969-10-29T22:30:00.010352Z</Log.Muted>
     {"  "}
-    <LogInfo>INFO</LogInfo>
+    <Log.Info>INFO</Log.Info>
     {" "}
-    <LogMain>ThreadId(01)</LogMain>
+    <Log.Main>ThreadId(01)</Log.Main>
     {" "}
-    <LogMuted>strut_core::spindown::registry:</LogMuted>
+    <Log.Muted>strut_core::spindown::registry:</Log.Muted>
     {" "}
-    <LogMain>Spindown completed</LogMain>
+    <Log.Main>Spindown completed</Log.Main>
 </Terminal>
 
 A few things to notice:
@@ -240,15 +240,15 @@ APP_PROFILE=prod cargo run
 The output is now fit for streaming structured logs:
 
 <Terminal width='95%' wrap={true} fontSize='0.75em'>
-    <ShellPrompt>$</ShellPrompt>
+    <Shell.Prompt>$</Shell.Prompt>
     {" "}
-    <ShellCommand>cargo</ShellCommand>
+    <Shell.Command>cargo</Shell.Command>
     {" "}
-    <ShellArgument>run</ShellArgument>
+    <Shell.Argument>run</Shell.Argument>
 
-    {"\n"}<LogMuted>{'{"timestamp":"1969-10-29T22:30:00.937059Z","level":"INFO","fields":{"message":"Starting app-backend with profile \'prod\' (default replica, lifetime ID \'rli-dgff-ysd\')"},"target":"strut::launchpad::wiring::preflight","threadId":"ThreadId(1)"}'}</LogMuted>
-    {"\n"}<LogMuted>{'{"timestamp":"1969-10-29T22:30:00.937169Z","level":"INFO","fields":{"message":"Running app-backend..."},"target":"strut_dummy","threadId":"ThreadId(1)"}'}</LogMuted>
-    {"\n"}<LogMuted>{'{"timestamp":"1969-10-29T22:30:00.937178Z","level":"INFO","fields":{"message":"Terminating application context"},"target":"strut_core::context","threadId":"ThreadId(1)"}'}</LogMuted>
-    {"\n"}<LogMuted>{'{"timestamp":"1969-10-29T22:30:00.937186Z","level":"INFO","fields":{"message":"Spindown initiated"},"target":"strut_core::spindown::registry","threadId":"ThreadId(1)"}'}</LogMuted>
-    {"\n"}<LogMuted>{'{"timestamp":"1969-10-29T22:30:00.937200Z","level":"INFO","fields":{"message":"Spindown completed"},"target":"strut_core::spindown::registry","threadId":"ThreadId(1)"}'}</LogMuted>
+    {"\n"}<Log.Muted>{'{"timestamp":"1969-10-29T22:30:00.937059Z","level":"INFO","fields":{"message":"Starting app-backend with profile \'prod\' (default replica, lifetime ID \'rli-dgff-ysd\')"},"target":"strut::launchpad::wiring::preflight","threadId":"ThreadId(1)"}'}</Log.Muted>
+    {"\n"}<Log.Muted>{'{"timestamp":"1969-10-29T22:30:00.937169Z","level":"INFO","fields":{"message":"Running app-backend..."},"target":"strut_dummy","threadId":"ThreadId(1)"}'}</Log.Muted>
+    {"\n"}<Log.Muted>{'{"timestamp":"1969-10-29T22:30:00.937178Z","level":"INFO","fields":{"message":"Terminating application context"},"target":"strut_core::context","threadId":"ThreadId(1)"}'}</Log.Muted>
+    {"\n"}<Log.Muted>{'{"timestamp":"1969-10-29T22:30:00.937186Z","level":"INFO","fields":{"message":"Spindown initiated"},"target":"strut_core::spindown::registry","threadId":"ThreadId(1)"}'}</Log.Muted>
+    {"\n"}<Log.Muted>{'{"timestamp":"1969-10-29T22:30:00.937200Z","level":"INFO","fields":{"message":"Spindown completed"},"target":"strut_core::spindown::registry","threadId":"ThreadId(1)"}'}</Log.Muted>
 </Terminal>
