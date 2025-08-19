@@ -1,0 +1,341 @@
+---
+sidebar_position: 3
+slug: rabbitmq
+toc_max_heading_level: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# RabbitMQ
+
+[this-configuration]: #configuration
+[this-cargo-features]: #cargo-features
+[this-facade]: #facade
+[this-batches]: #batches
+[this-egress-config]: #egress-publisher-config
+[this-ingress-config]: #ingress-subscriber-config
+
+[crates-io-lapin]: https://crates.io/crates/lapin
+[crates-io-serde-json]: https://crates.io/crates/serde-json
+
+[docs-rs-strut-app-config]: https://docs.rs/strut/latest/strut/struct.AppConfig.html
+[docs-rs-strut-rabbitmq-facade]: https://docs.rs/strut/latest/strut/struct.RabbitMq.html
+[docs-rs-strut-rabbitmq-publisher]: https://docs.rs/strut-rabbitmq/latest/strut_rabbitmq/transport/struct.Publisher.html
+[docs-rs-strut-rabbitmq-subscriber]: https://docs.rs/strut-rabbitmq/latest/strut_rabbitmq/transport/struct.Subscriber.html
+[docs-rs-strut-app-spindown]: https://docs.rs/strut/latest/strut/struct.AppSpindown.html
+
+[rabbitmq-homepage]: https://www.rabbitmq.com
+[amqp-091-protocol]: https://www.rabbitmq.com/amqp-0-9-1-protocol
+[amqp-091-model-explained]: https://www.rabbitmq.com/tutorials/amqp-concepts
+[amqp-10-protocol]: https://www.rabbitmq.com/docs/amqp
+[rabbitmq-streams]: https://www.rabbitmq.com/docs/streams
+[rabbitmq-tutorials]: https://www.rabbitmq.com/tutorials
+
+Wraps the [`lapin`][crates-io-lapin] crate for convenient sending and receiving of RabbitMQ messages.
+Supports sending and receiving [in batches][this-batches].
+
+:::note[RabbitMQ versions]
+This component works with (and is tested against) the most recent versions of both RabbitMQ 3 and RabbitMQ 4.
+:::
+
+:::warning[AMQP 0-9-1]
+This component (as well as the underlying [`lapin`][crates-io-lapin] crate) targets the [AMQP 0-9-1][amqp-091-protocol] protocol, as implemented by the popular broker [RabbitMQ][rabbitmq-homepage].
+Despite the similarity in name and lineage, the [AMQP 1.0][amqp-10-protocol] protocol is completely different from AMQP 0-9-1 and is out of scope for this component, despite native support from RabbitMQ since version 4.0.
+On the same note, [RabbitMQ Streams][rabbitmq-streams] are not part of either of the AMQP-named protocols, and are also not covered by this component.
+
+Some level of understanding of the AMQP 0-9-1 protocol and its implementation by RabbitMQ are required to use this component.
+The following parts of the RabbitMQ documentation are excellent sources of knowledge:
+
+- [AMQP 0-9-1 Model Explained][amqp-091-model-explained]
+- [RabbitMQ tutorials][rabbitmq-tutorials]
+:::
+
+## Quickstart
+
+1. Enable the `rabbitmq` [feature][this-cargo-features].
+
+```bash
+cargo add strut --features rabbitmq
+```
+
+2. Configure an egress (outgoing message route) and an ingress (incoming message route).
+
+<Tabs>
+    <TabItem value="YAML">
+        ```yaml title="config/rabbitmq.yaml"
+        rabbitmq:
+            egress:
+                demo_egress:
+                    routing_key: demo.key
+
+            ingress:
+                demo_ingress:
+                    queue: demo.key
+        ```
+    </TabItem>
+    <TabItem value="TOML">
+        ```toml title="config/rabbitmq.toml"
+        [rabbitmq.egress.demo_egress]
+        routing_key = "demo.key"
+
+        [rabbitmq.ingress.demo_ingress]
+        queue = "demo.key"
+        ```
+    </TabItem>
+</Tabs>
+
+3. Retrieve the publisher (for the egress) and the subscriber (for the ingress) from the [`RabbitMQ`][this-facade] facade and use them:
+
+```rust
+use strut::rabbitmq::*;
+use strut::RabbitMq;
+
+#[strut::main]
+async fn main() {
+    // Make publisher and subscriber
+    let publisher: Publisher = RabbitMq::publisher("demo_egress");
+    let subscriber: StringSubscriber = RabbitMq::string_subscriber("demo_ingress");
+
+    // Ensure the queue exists before we start sending
+    subscriber.declare().await;
+
+    // Send message
+    publisher.publish("Demo message").await;
+
+    // Receive message
+    let envelope: Envelope<String> = subscriber.receive().await;
+
+    assert_eq!(envelope.payload(), "Demo message");
+
+    // Ack message
+    envelope.complete().await;
+}
+```
+
+## Cargo features
+
+### ⛳︎ Feature `rabbitmq` {#feature-rabbitmq}
+
+This is the main gateway feature of this component.
+
+### ⛳︎ Feature `rabbitmq-json` {#feature-rabbitmq-json}
+
+Enables encoding/decoding messages to/from JSON using the [`serde-json`][crates-io-serde-json].
+
+## Component structure
+
+### ☑︎ Configuration {#configuration}
+
+The RabbitMQ component allows configuring any number of RabbitMQ handles (sets of credentials).
+Most applications, however, would need just one.
+The default, unnamed handle is used implicitly by the [`RabbitMq`][this-facade] facade.
+All other RabbitMQ handles are named and may be retrieved from [`AppConfig`][docs-rs-strut-app-config].
+
+The component also allows configuring any number of RabbitMQ [egresses][this-egress-config] and [ingresses][this-ingress-config].
+Their corresponding [`Publisher`][docs-rs-strut-rabbitmq-publisher]s and [`Subscriber`][docs-rs-strut-rabbitmq-subscriber]s can be retrieved from the component [facade][this-facade].
+
+A full configuration is structured as such:
+
+<Tabs>
+    <TabItem value="YAML">
+        ```yaml title="config/rabbitmq.yaml"
+        rabbitmq:
+            host: localhost # default RabbitMQ handle
+            port: 5672
+            user: guest
+            password: guest
+            vhost: /
+
+            extra: # additional named RabbitMQ handles
+                named_handle:
+                    host: localhost
+                    port: 3372
+                    user: admin
+                    password: admin
+                    vhost: /custom
+
+            egress:
+                named_publisher: "routing.key" # publisher definition goes here
+
+            ingress:
+                named_subscriber: "queue.name" # subscriber definition goes here
+        ```
+    </TabItem>
+    <TabItem value="TOML">
+        ```toml title="config/rabbitmq.toml"
+        [rabbitmq]
+        host = "localhost" # default RabbitMQ handle
+        port = 5672
+        user = "guest"
+        password = "guest"
+        vhost = "/"
+
+        [rabbitmq.extra.named_handle] # additional named RabbitMQ handles
+        host = "localhost"
+        port = 3372
+        user = "admin"
+        password = "admin"
+        vhost = "/custom"
+
+        [rabbitmq.egress]
+        named_publisher = "routing.key" # publisher definition goes here
+
+        [rabbitmq.ingress]
+        named_subscriber = "queue.name" # subscriber definition goes here
+        ```
+    </TabItem>
+</Tabs>
+
+Both a publisher and a subscriber require at least one configuration value: a routing key and a queue name, respectively.
+More detailed configuration examples for both are given below.
+
+#### Egress (publisher) config
+
+An egress is an outgoing (away from the application) route for sending messages to RabbitMQ.
+The most basic form of an egress definition is simply a routing key to send the message to, as shown below.
+
+:::warning[Egress doesn’t declare exchange and queue]
+Egress and its [`Publisher`][docs-rs-strut-rabbitmq-publisher] merely target the configured RabbitMQ exchange and queue by name.
+It does not declare (create) them on the broker.
+
+Declarations are performed on the receiving side, by the [`Subscriber`][docs-rs-strut-rabbitmq-subscriber].
+:::
+
+<Tabs>
+    <TabItem value="YAML">
+        ```yaml title="config/rabbitmq.yaml"
+        rabbitmq:
+            egress:
+                named_egress: demo.routing.key
+        ```
+    </TabItem>
+    <TabItem value="TOML">
+        ```toml title="config/rabbitmq.toml"
+        [rabbitmq.egress]
+        named_egress = "demo.routing.key"
+        ```
+    </TabItem>
+</Tabs>
+
+A full egress definition is structured as shown below:
+
+<Tabs>
+    <TabItem value="YAML">
+        ```yaml title="config/rabbitmq.yaml"
+        rabbitmq:
+            egress:
+                named_egress:
+                    exchange: amq.topic
+                    routing_key: demo.routing.key
+                    confirmation: routed # transmitted (default), accepted, routed
+                    force_durable: false
+        ```
+    </TabItem>
+    <TabItem value="TOML">
+        ```toml title="config/rabbitmq.toml"
+        [rabbitmq.egress.named_egress]
+        exchange = "amq.topic"
+        routing_key = "demo.routing.key"
+        confirmation = "routed" # transmitted (default), accepted, routed
+        force_durable = false
+        ```
+    </TabItem>
+</Tabs>
+
+#### Ingress (subscriber) config
+
+An ingress is an incoming (toward the application) route for receiving messages from RabbitMQ.
+The most basic form of an ingress definition is simply a queue name to create and subscribe to, as shown below.
+
+:::note[Ingress declares exchange and queue]
+Ingress and its [`Subscriber`][docs-rs-strut-rabbitmq-subscriber] are responsible for declaring the RabbitMQ exchange and queue, as well as creating bindings between them.
+Consequently, ingress configuration is the place for configuring objects on the broker.
+:::
+
+<Tabs>
+    <TabItem value="YAML">
+        ```yaml title="config/rabbitmq.yaml"
+        rabbitmq:
+            ingress:
+                named_ingress: demo.queue.name
+        ```
+    </TabItem>
+    <TabItem value="TOML">
+        ```toml title="config/rabbitmq.toml"
+        [rabbitmq.ingress]
+        named_ingress = "demo.queue.name"
+        ```
+    </TabItem>
+</Tabs>
+
+A full ingress definition is structured as shown below:
+
+<Tabs>
+    <TabItem value="YAML">
+        ```yaml title="config/rabbitmq.yaml"
+        rabbitmq:
+            ingress:
+                named_ingress:
+                    exchange:
+                        name: demo.exchange.name
+                        kind: direct # direct (default), fanout, headers, topic, hash_key, hash_id
+                        durable: true
+                        auto_delete: false
+                    queue: demo.queue.name
+                    durable: false
+                    exclusive: false
+                    auto_delete: false
+                    batch_size: 1
+                    batch_timeout: 250ms
+                    prefetch_count: ~
+                    acking_behavior: manual # manual (default), auto
+                    gibberish_behavior: complete # complete (default), backwash, abandon
+                    binding_keys:
+                        - demo.binding.key.1
+                        - demo.binding.key.2
+        #           binding_headers: # commented out because direct exchange cannot have headers
+        #               header_a: 12
+        #               header_b: true
+                    headers_behavior: all # all (default), any
+        ```
+    </TabItem>
+    <TabItem value="TOML">
+        ```toml title="config/rabbitmq.toml"
+        [rabbitmq.ingress.named_ingress.exchange]
+        name = "demo.exchange.name"
+        kind = "direct" # direct (default), fanout, headers, topic, hash_key, hash_id
+        durable = true
+        auto_delete = false
+
+        [rabbitmq.ingress.named_ingress]
+        queue = "demo.queue.name"
+        durable = false
+        exclusive = false
+        auto_delete = false
+        batch_size = 1
+        batch_timeout = "250ms"
+        # prefetch_count = 100 # TOML doesn’t support null values, so we have to omit the value if we don’t want any prefetch
+        acking_behavior = "manual" # manual (default), auto
+        gibberish_behavior = "complete" # complete (default), backwash, abandon
+        binding_keys = [
+          "demo.binding.key.1",
+          "demo.binding.key.2"
+        ]
+        # binding_headers = { header_a = 12, header_b = true } # commented out because direct exchange cannot have headers
+        headers_behavior = "all" # all (default), any
+        ```
+    </TabItem>
+</Tabs>
+
+### ∅ Startup {#startup}
+
+_This component does not include any startup logic._
+
+### ☑︎ Facade {#facade}
+
+Use the [`RabbitMq`][docs-rs-strut-rabbitmq-facade] facade to retrieve the [pre-configured][this-configuration] [`Publisher`][docs-rs-strut-rabbitmq-publisher]s and [`Subscriber`][docs-rs-strut-rabbitmq-subscriber]s.
+
+### ☑︎ Spindown {#spindown}
+
+The component automatically attempts to close all open connections to RabbitMQ during [spindown][docs-rs-strut-app-spindown].

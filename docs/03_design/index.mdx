@@ -1,0 +1,69 @@
+---
+sidebar_position: 3
+slug: /design
+title: Design
+---
+
+# Strut design
+
+[this-crate-versions]: #crate-versions
+
+[docs-components]: /docs/components
+[docs-component]: /docs/component
+[docs-config]: /docs/config
+
+[cargo-book-features]: https://doc.rust-lang.org/cargo/reference/features.html
+[cargo-book-default-feature]: https://doc.rust-lang.org/cargo/reference/features.html#the-default-feature
+[crates-io-policies]: https://crates.io/policies
+
+[crates-io-strut]: https://crates.io/crates/strut
+[crates-io-strut-tracing]: https://crates.io/crates/strut-tracing
+[crates-io-strut-factory]: https://crates.io/crates/strut-factory
+
+[docs-rs-strut-features]: https://docs.rs/crate/strut/latest/features
+
+## Crates
+
+Strut is not just one crate.
+The [`strut`][crates-io-strut] crate is the entrypoint for most users, but many supporting `strut-*` crates exist.
+This is intended for separation of concerns and maintainability.
+
+All Strut-related crates are public, which is only due to the [way crates.io works][crates-io-policies].
+However, not all crates are intended to be used directly.
+
+-  **Public** crates such as [`strut`][crates-io-strut] or the [component crates][docs-components] are advertised in this documentation.
+    - Use them at will, keeping in mind the [versioning][this-crate-versions].
+-  **Internal** crates such as [`strut-factory`][crates-io-strut-factory] are marked as such in their `README`.
+    - Kindly don’t depend on these crates directly, unless you know well what you are doing.
+
+### Crate versions
+
+For Strut to work as intended, no more than one version of Strut should be present in the dependency graph.
+The versions of the `strut-*` crates are generally kept in lockstep.
+However, it is still possible to artificially introduce multiple versions into a binary crate.
+
+To stay on the safe side, make sure to:
+
+-  either depend on just the [`strut`][crates-io-strut] entrypoint crate alone,
+-  or depend directly on any number of the [component crates][docs-components], but not on the [`strut`][crates-io-strut] crate itself.
+
+:::warning[Don’t use Strut in public libraries]
+The title says it all.
+
+If you depend on any Strut crate in a library published to crates.io, sooner or later someone downstream will end up with multiple versions of Strut in their binary crate.
+The version conflict may work just fine.
+It may also break the application at compile time.
+Or, it may also compile and introduce unexpected hidden behavior.
+
+As the crates.io [usage policy][crates-io-policies] states, the whole thing only works effectively if users are able to work together as part of a community in good faith.
+Kindly don’t use Strut in public libraries. 🙏🏻
+:::
+
+## Customization
+
+As with any Rust library, there are two layers of customizing Strut:
+
+-  At compile time the [Cargo features][cargo-book-features] affect what [parts of Strut][docs-rs-strut-features] are pulled in.
+    - Features are grouped by [Strut component][docs-component] and are described in the component documentation.
+    - As a design choice, the special [`default` feature][cargo-book-default-feature] is always empty in all Strut crates.
+-  At runtime, the included features are customized via [external configuration][docs-config].

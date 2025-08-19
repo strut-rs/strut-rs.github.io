@@ -1,0 +1,133 @@
+---
+sidebar_position: 4
+slug: sentry
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Sentry
+
+[this-configuration]: #configuration
+
+[docs-components-tracing]: /docs/components/tracing#sentry-integration
+
+[crates-io-sentry]: https://crates.io/crates/sentry
+
+[docs-rs-strut-sentry-config]: https://docs.rs/strut-sentry/latest/strut_sentry/struct.SentryConfig.html
+[docs-rs-strut-runtime-wiring]: https://docs.rs/strut/latest/strut/struct.RuntimeWiring.html
+[docs-rs-sentry-init]: https://docs.rs/sentry/latest/sentry/fn.init.html
+[docs-rs-sentry-guard]: https://docs.rs/sentry/latest/sentry/struct.ClientInitGuard.html
+[docs-rs-strut-app-spindown]: https://docs.rs/strut/latest/strut/struct.AppSpindown.html
+
+[sentry-homepage]: https://sentry.io
+[sentry-dsn]: https://docs.sentry.io/concepts/key-terms/dsn-explainer
+
+Seamlessly integrates with [Sentry][sentry-homepage] by wrapping the [`sentry`][crates-io-sentry] crate and providing optional [integration with logging & tracing][docs-components-tracing].
+
+## Quickstart
+
+1. Enable the `sentry` feature.
+
+```bash
+cargo add strut --features sentry
+```
+
+2. [Configure][this-configuration] the Sentry DSN (connection URL).
+3. All runtime panics will now be reported to Sentry.
+If the [tracing][docs-components-tracing] component is enabled, you can also send your tracing events to Sentry by adding `alert = true` key-value field.
+
+```rust
+use strut::tracing::*;
+
+#[strut::main]
+async fn main() {
+    error!(alert = true, "This will be also sent to Sentry");
+}
+```
+
+## Cargo features
+
+### ⛳︎ Feature `sentry` {#feature-tracing}
+
+This is the main gateway feature of this component.
+
+## Component structure
+
+### ☑︎ Configuration {#configuration}
+
+At the most basic, you need to provide the [Sentry DSN][sentry-dsn].
+An empty or omitted DSN will essentially disable the Sentry client.
+
+<Tabs>
+    <TabItem value="YAML">
+        ```yaml title="config/tracing.yaml"
+        sentry:
+            dsn: https://0123456789abcdef0123456789abcdef@012345.ingest.sentry.1o/9876543
+        ```
+    </TabItem>
+    <TabItem value="TOML">
+        ```toml title="config/tracing.toml"
+        [sentry]
+        dsn = "https://0123456789abcdef0123456789abcdef@012345.ingest.sentry.1o/9876543"
+        ```
+    </TabItem>
+</Tabs>
+
+The full configuration is shown below.
+
+<Tabs>
+    <TabItem value="YAML">
+        ```yaml title="config/tracing.yaml"
+        sentry:
+            dsn: https://0123456789abcdef0123456789abcdef@012345.ingest.sentry.1o/9876543
+            debug: false
+            sample_rate: 1.0
+            traces_sample_rate: 0.0
+            max_breadcrumbs: 64
+            attach_stacktrace: false
+            shutdown_timeout: 2s # parsed using `humantime` crate
+        ```
+    </TabItem>
+    <TabItem value="TOML">
+        ```toml title="config/tracing.toml"
+        [sentry]
+        dsn = "https://0123456789abcdef0123456789abcdef@012345.ingest.sentry.1o/9876543"
+        debug = false
+        sample_rate = 1.0
+        traces_sample_rate = 0.0
+        max_breadcrumbs = 64
+        attach_stacktrace = false
+        shutdown_timeout = "2s" # parsed using `humantime` crate
+        ```
+    </TabItem>
+</Tabs>
+
+For in-code reference, see [`SentryConfig`][docs-rs-strut-sentry-config].
+
+### ☑︎ Startup {#startup}
+
+The startup logic of this component is called from the [`RuntimeWiring`][docs-rs-strut-runtime-wiring].
+It involves [creating and binding a Sentry client][docs-rs-sentry-init] and then keeping the returned [guard][docs-rs-sentry-guard] for the duration of the runtime.
+
+### ∅ Facade {#facade}
+
+_This component does not expose a facade._
+
+### ☑︎ Spindown {#spindown}
+
+The component automatically attempts to flush all unsent Sentry events during [spindown][docs-rs-strut-app-spindown] by dropping the Sentry [guard][docs-rs-sentry-guard].
+
+## Tracing integration
+
+If you also use the [tracing][docs-components-tracing] component, you can easily create Sentry events from the `tracing` events.
+Simply add `alert = true` key-value field:
+
+```rust
+use strut::tracing::*;
+
+#[strut::main]
+async fn main() {
+    error!(alert = true, "This will be also sent to Sentry");
+}
+```

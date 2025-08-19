@@ -1,0 +1,349 @@
+---
+sidebar_position: 7
+slug: /custom
+title: Integrations
+---
+
+import Terminal from '@site/src/components/Terminal';
+import {Shell, Log} from '@site/src/components/Terminal/Highlight';
+
+# Custom integrations
+
+[this-example-heartbeat]: #example-heartbeat
+
+[docs-components]: /docs/components
+[docs-config]: /docs/config
+
+[docs-rs-strut-app-config]: https://docs.rs/strut/latest/strut/struct.AppConfig.html
+[docs-rs-strut-app-context]: https://docs.rs/strut/latest/strut/struct.AppContext.html
+[docs-rs-strut-app-spindown]: https://docs.rs/strut/latest/strut/struct.AppSpindown.html
+
+Strut’s core mechanisms used by its [components][docs-components] are also exposed to client code:
+
+- [`AppConfig`][docs-rs-strut-app-config] supports arbitrary configuration.
+- [`AppContext`][docs-rs-strut-app-context] provides a central reference for the application’s “liveness” state (whether shutdown is imminent).
+- [`AppSpindown`][docs-rs-strut-app-spindown] issues “wait-for-me-at-shutdown” tokens, which enable pre-shutdown logic (e.g., cleanup).
+
+Let’s exemplify how to integrate with Strut.
+
+## Example: Heartbeat
+
+We’ll implement a heartbeat component that produces “tick” events at configurable intervals.
+When shutdown is imminent, it echoes the total uptime before exiting.
+
+<Terminal width='95%' wrap={false} fontSize='0.75em'>
+    <Shell.Prompt>$</Shell.Prompt>
+    {" "}
+    <Shell.Command>cargo</Shell.Command>
+    {" "}
+    <Shell.Argument>run</Shell.Argument>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:48.239628Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(01)</Log.Main>
+    {" "}
+    <Log.Muted>strut::launchpad::wiring::preflight:</Log.Muted>
+    {" "}
+    <Log.Main>Starting app with profile 'dev' (default replica, lifetime ID 'oqq-mnss-yfw')</Log.Main>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:51.241940Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(05)</Log.Main>
+    {" "}
+    <Log.Muted>heartbeat-demo:</Log.Muted>
+    {" "}
+    <Log.Main>Tick 0</Log.Main>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:54.243332Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(05)</Log.Main>
+    {" "}
+    <Log.Muted>heartbeat-demo:</Log.Muted>
+    {" "}
+    <Log.Main>Tick 1</Log.Main>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:57.245996Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(05)</Log.Main>
+    {" "}
+    <Log.Muted>heartbeat-demo:</Log.Muted>
+    {" "}
+    <Log.Main>Tick 2</Log.Main>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:58.242312Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(01)</Log.Main>
+    {" "}
+    <Log.Muted>strut_core::context:</Log.Muted>
+    {" "}
+    <Log.Main>Terminating application context</Log.Main>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:58.242397Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(01)</Log.Main>
+    {" "}
+    <Log.Muted>strut_core::spindown::registry:</Log.Muted>
+    {" "}
+    <Log.Main>Spindown initiated</Log.Main>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:58.242439Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(05)</Log.Main>
+    {" "}
+    <Log.Muted>heartbeat-demo:</Log.Muted>
+    {" "}
+    <Log.Main>Total uptime: 10 seconds</Log.Main>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:58.242492Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(01)</Log.Main>
+    {" "}
+    <Log.Muted>strut_core::spindown::registry:</Log.Muted>
+    {" "}
+    <Log.Main>Waiting for 1 registered workload(s) to complete</Log.Main>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:58.242550Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(01)</Log.Main>
+    {" "}
+    <Log.Muted>strut_core::spindown::registry:</Log.Muted>
+    {" "}
+    <Log.Main>Completed gracefully <em>workload</em>="heartbeat"</Log.Main>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:58.242571Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(01)</Log.Main>
+    {" "}
+    <Log.Muted>strut_core::spindown::registry:</Log.Muted>
+    {" "}
+    <Log.Main>All workloads completed gracefully</Log.Main>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:58.242588Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(01)</Log.Main>
+    {" "}
+    <Log.Muted>strut_core::spindown::registry:</Log.Muted>
+    {" "}
+    <Log.Main>Spindown completed</Log.Main>
+</Terminal>
+
+### Configuration
+
+Write a configuration struct that customizes the heartbeat period:
+
+```rust
+struct HeartbeatConfig {
+    period_secs: u64,
+}
+```
+
+To make it work, we need to implement `Default` and `serde::Deserialize` on it.
+The struct also cannot have any reference-type fields (to satisfy `serde::de::DeserializeOwned`).
+
+```rust
+use serde::Deserialize;
+
+/// Configuration struct that implements [`Default`] and [`Deserialize`].
+#[derive(Debug, Deserialize)]
+#[serde(default)]
+struct HeartbeatConfig {
+    period_secs: u64,
+}
+
+/// Implementing by hand to have non-trivial defaults.
+impl Default for HeartbeatConfig {
+    fn default() -> Self {
+        Self { period_secs: 3 }
+    }
+}
+```
+
+### Startup
+
+The startup logic begins (but not necessarily ends) at startup.
+Write a startup function that emits an incrementing tick event every `period_secs` seconds.
+
+```rust
+use std::time::Duration;
+use strut::{AppConfig, AppContext};
+
+/// Implements main logic of the `heartbeat` component. In this case, it emits
+/// an incrementing tick number at regular intervals.
+async fn heartbeat_startup() {
+    // Create counter
+    let mut counter = 0;
+
+    // Retrieve config
+    let heartbeat_config: HeartbeatConfig = AppConfig::section("heartbeat");
+    let period = Duration::from_secs(heartbeat_config.period_secs);
+
+    // Write heartbeat events repeatedly
+    while AppContext::is_alive() {
+        tokio::time::sleep(period).await;
+        tracing::info!("Tick {}", counter);
+        counter += 1;
+    }
+}
+```
+
+The function has to be `async` because we want to suspend execution without blocking the thread while we wait for the next tick.
+Things to note here:
+
+- [`AppConfig`][docs-rs-strut-app-config] supports arbitrary config structures, which you can request by name.
+- [`AppContext`][docs-rs-strut-app-context] allows us to check whether the application is alive, so we can stop ticking when the application is headed for shutdown.
+
+### Spindown
+
+The spindown logic gets executed right before the application shuts down.
+Write a spindown function that emits the total application uptime in seconds right before exiting.
+
+```rust
+use std::time::Instant;
+use strut::{AppContext, AppSpindown};
+
+/// Implements pre-shutdown logic of the `heartbeat` component. In this case, it
+/// reports the total application uptime.
+async fn heartbeat_spindown() {
+    // Mark startup time
+    let startup_time = Instant::now();
+
+    // Register for spindown (dropping the token is sufficient to signal completion)
+    let _token = AppSpindown::register("heartbeat");
+
+    // Wait for global application context to terminate
+    AppContext::terminated().await;
+
+    // Report total uptime right before shutdown
+    tracing::info!("Total uptime: {} seconds", startup_time.elapsed().as_secs());
+}
+```
+
+This function is also async because it will spend most of the time waiting for the application to go into spindown.
+Things to note here:
+
+- You should register with [`AppSpindown`][docs-rs-strut-app-spindown] early on and keep the returned token.
+- [`AppContext`][docs-rs-strut-app-context] allows us to suspend execution until the application context is terminated.
+
+### Main function
+
+The `#[strut::main]` function ties it all up, producing the output similar to the [above][this-example-heartbeat].
+
+```rust
+use std::time::Duration;
+
+#[strut::main]
+async fn main() {
+    // Schedule startup and spindown logic
+    tokio::spawn(heartbeat_startup());
+    tokio::spawn(heartbeat_spindown());
+
+    // Simulate 10 seconds of work
+    tokio::time::sleep(Duration::from_secs(10)).await;
+}
+```
+
+<details>
+    <summary>Full code</summary>
+
+    ```rust title="main.rs"
+    use serde::Deserialize;
+    use std::time::{Duration, Instant};
+    use strut::{AppConfig, AppContext, AppSpindown};
+
+    #[strut::main]
+    async fn main() {
+        // Schedule startup and spindown logic
+        tokio::spawn(heartbeat_startup());
+        tokio::spawn(heartbeat_spindown());
+
+        // Simulate 10 seconds of work
+        tokio::time::sleep(Duration::from_secs(10)).await;
+    }
+
+    /// Configuration struct that implements [`Default`] and [`Deserialize`].
+    #[derive(Debug, Deserialize)]
+    #[serde(default)]
+    struct HeartbeatConfig {
+        period_secs: u64,
+    }
+
+    /// Implementing by hand to have non-trivial defaults.
+    impl Default for HeartbeatConfig {
+        fn default() -> Self {
+            Self { period_secs: 3 }
+        }
+    }
+
+    /// Implements main logic of the `heartbeat` component. In this case, it emits
+    /// an incrementing tick number at regular intervals.
+    async fn heartbeat_startup() {
+        // Create counter
+        let mut counter = 0;
+
+        // Retrieve config
+        let heartbeat_config: HeartbeatConfig = AppConfig::section("heartbeat");
+        let period = Duration::from_secs(heartbeat_config.period_secs);
+
+        // Write heartbeat events repeatedly
+        while AppContext::is_alive() {
+            tokio::time::sleep(period).await;
+            tracing::info!("Tick {}", counter);
+            counter += 1;
+        }
+    }
+
+    /// Implements pre-shutdown logic of the `heartbeat` component. In this case, it
+    /// reports the total application uptime.
+    async fn heartbeat_spindown() {
+        // Mark startup time
+        let startup_time = Instant::now();
+
+        // Register for spindown (dropping the token is sufficient to signal completion)
+        let _token = AppSpindown::register("heartbeat");
+
+        // Wait for global application context to terminate
+        AppContext::terminated().await;
+
+        // Report total uptime right before shutdown
+        tracing::info!("Total uptime: {} seconds", startup_time.elapsed().as_secs());
+    }
+    ```
+</details>
+
+:::note[No config?]
+We didn’t provide any runtime configuration, forcing [`AppConfig`][docs-rs-strut-app-config] to use the default.
+What will happen if we run this example with `APP_HEARTBEAT_PERIODSECS=1 cargo run`?
+:::

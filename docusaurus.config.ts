@@ -102,6 +102,11 @@ const config: Config = {
                     position: 'left',
                 },
                 {
+                    label: 'GitHub',
+                    href: 'https://github.com/strut-rs/strut',
+                    position: 'right',
+                },
+                {
                     label: 'Crates.io',
                     href: 'https://crates.io/crates/strut',
                     position: 'right',
@@ -109,11 +114,6 @@ const config: Config = {
                 {
                     label: 'Docs.rs',
                     href: 'https://docs.rs/strut/latest',
-                    position: 'right',
-                },
-                {
-                    label: 'GitHub',
-                    href: 'https://github.com/strut-rs/strut',
                     position: 'right',
                 },
                 {
@@ -131,11 +131,11 @@ const config: Config = {
                     items: [
                         {
                             label: 'Quickstart',
-                            to: '/docs/quickstart',
+                            to: 'docs/quickstart',
                         },
                         {
                             label: 'Docs',
-                            to: '/docs',
+                            to: 'docs',
                         },
                     ],
                 },
@@ -160,8 +160,12 @@ const config: Config = {
                     title: 'Community',
                     items: [
                         {
+                            label: 'Authors',
+                            to: 'blog/authors',
+                        },
+                        {
                             label: 'Blog',
-                            to: '/blog',
+                            to: 'blog',
                         },
                         {
                             label: 'Issues',

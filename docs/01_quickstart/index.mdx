@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+slug: /quickstart
 ---
 
 import Tabs from '@theme/Tabs';
@@ -87,19 +88,19 @@ Now, when we `cargo run`, the output is:
 We can also set/override all config entries with environment variables:
 
 ```bash
-APP_NAME=custom-app cargo run
+APP_NAME=app-custom cargo run
 ```
 
 <Terminal>
     <Shell.Prompt>$</Shell.Prompt>
     {" "}
-    <Shell.Variable>APP_NAME=custom-app</Shell.Variable>
-    {" "}
+    <Shell.Variable>APP_NAME</Shell.Variable>
+    {"=app-custom "}
     <Shell.Command>cargo</Shell.Command>
     {" "}
     <Shell.Argument>run</Shell.Argument>
 
-    {"\n"}<Shell.Output>Running custom-app...</Shell.Output>
+    {"\n"}<Shell.Output>Running app-custom...</Shell.Output>
 </Terminal>
 
 Nothing too exciting so far.
@@ -242,6 +243,8 @@ The output is now fit for streaming structured logs:
 <Terminal width='95%' wrap={true} fontSize='0.75em'>
     <Shell.Prompt>$</Shell.Prompt>
     {" "}
+    <Shell.Variable>APP_PROFILE</Shell.Variable>
+    {"=prod "}
     <Shell.Command>cargo</Shell.Command>
     {" "}
     <Shell.Argument>run</Shell.Argument>

@@ -1,0 +1,202 @@
+---
+sidebar_position: 1
+slug: tracing
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Terminal from '@site/src/components/Terminal';
+import {Shell, Log} from '@site/src/components/Terminal/Highlight';
+
+# Logging & tracing
+
+[this-configuration]: #configuration
+
+[docs-components-sentry]: /docs/components/sentry
+
+[crates-io-tracing]: https://crates.io/crates/tracing
+
+[docs-rs-strut-tracing-config]: https://docs.rs/strut-tracing/latest/strut_tracing/struct.TracingConfig.html
+[docs-rs-strut-config-wiring]: https://docs.rs/strut/latest/strut/struct.ConfigurationWiring.html
+
+[tracing-fmt-subscriber]: https://docs.rs/tracing-subscriber/latest/tracing_subscriber/fmt/format/index.html
+[tracing-in-executables]: https://docs.rs/tracing/latest/tracing/#in-executables
+[tracing-consuming-log]: https://docs.rs/tracing/latest/tracing/#consuming-log-records
+
+Enables logging/tracing events via the [`tracing`][crates-io-tracing] crate.
+
+## Quickstart
+
+1. Enable the `tracing` feature.
+
+```bash
+cargo add strut --features tracing
+```
+
+2. Optionally, [customize the configuration][this-configuration].
+3. Parts of the [`tracing`][crates-io-tracing] crate API are available under `strut::tracing::*`.
+
+```rust
+use strut::tracing::*;
+
+#[strut::main]
+async fn main() {
+    info!("Running application logic");
+}
+```
+
+<Terminal width='95%' wrap={false} fontSize='0.75em'>
+    <Shell.Prompt>$</Shell.Prompt>
+    {" "}
+    <Shell.Command>cargo</Shell.Command>
+    {" "}
+    <Shell.Argument>run</Shell.Argument>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:00.010227Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(01)</Log.Main>
+    {" "}
+    <Log.Muted>strut::launchpad::wiring::preflight:</Log.Muted>
+    {" "}
+    <Log.Main>Starting app-backend with profile 'dev' (default replica, lifetime ID 'xbr-dwxn-klp')</Log.Main>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:00.010296Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(01)</Log.Main>
+    {" "}
+    <Log.Muted>demo_app:</Log.Muted>
+    {" "}
+    <Log.Main>Running application logic</Log.Main>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:00.010308Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(01)</Log.Main>
+    {" "}
+    <Log.Muted>strut_core::context:</Log.Muted>
+    {" "}
+    <Log.Main>Terminating application context</Log.Main>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:00.010325Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(01)</Log.Main>
+    {" "}
+    <Log.Muted>strut_core::spindown::registry:</Log.Muted>
+    {" "}
+    <Log.Main>Spindown initiated</Log.Main>
+
+    {"\n"}
+    <Log.Muted>1969-10-29T22:30:00.010352Z</Log.Muted>
+    {"  "}
+    <Log.Info>INFO</Log.Info>
+    {" "}
+    <Log.Main>ThreadId(01)</Log.Main>
+    {" "}
+    <Log.Muted>strut_core::spindown::registry:</Log.Muted>
+    {" "}
+    <Log.Main>Spindown completed</Log.Main>
+</Terminal>
+
+## Cargo features
+
+### ⛳︎ Feature `tracing` {#feature-tracing}
+
+This is the main gateway feature of this component.
+
+### ⛳︎ Feature `tracing-log` {#feature-tracing-log}
+
+Automatically consumes [`log`][tracing-consuming-log] events as `tracing` events.
+
+### ⛳︎ Feature `tracing-json` {#feature-tracing-json}
+
+Enables writing JSON-formatted structured events to `stdout`.
+JSON formatting needs to be selected in the `tracing.flavor` config key.
+
+## Component structure
+
+### ☑︎ Configuration {#configuration}
+
+Below is a full configuration example.
+All keys are optional.
+
+<Tabs>
+    <TabItem value="YAML">
+        ```yaml title="config/tracing.yaml"
+        tracing:
+            verbosity: info # off, error, warn, info (default), debug, trace
+            flavor: full # full (default), compact, pretty, json (with `tracing-json` feature)
+            show_color: true
+            show_timestamp: true
+            show_target: true
+            show_file: false
+            show_line_number: false
+            show_level: true
+            show_thread_id: true
+            show_thread_name: false
+            flatten_json: true # with `tracing-json` feature
+            targets:
+                my_crate: info # off, error, warn, info (default), debug, trace
+                my_crate::interesting_module: off # same as above
+        ```
+    </TabItem>
+    <TabItem value="TOML">
+        ```toml title="config/tracing.toml"
+        [tracing]
+        verbosity = "info" # off, error, warn, info (default), debug, trace
+        flavor = "full" # full (default), compact, pretty, json (with `tracing-json` feature)
+        show_color = true
+        show_timestamp = true
+        show_target = true
+        show_file = false
+        show_line_number = false
+        show_level = true
+        show_thread_id = true
+        show_thread_name = false
+        flatten_json = true # with `tracing-json` feature
+
+        [tracing.targets]
+        my_crate = "info" # off, error, warn, info (default), debug, trace
+        "my_crate::interesting_module" = "off" # same as above
+        ```
+    </TabItem>
+</Tabs>
+
+For in-code reference, see [`TracingConfig`][docs-rs-strut-tracing-config].
+
+### ☑︎ Startup {#startup}
+
+The startup logic of this component is called from the [`ConfigurationWiring`][docs-rs-strut-config-wiring].
+It involves configuring a [formatted subscriber][tracing-fmt-subscriber] and [initializing it globally][tracing-in-executables].
+
+### ∅ Facade {#facade}
+
+_This component does not expose a facade._
+
+### ∅ Spindown {#spindown}
+
+_This component does not include any spindown logic._
+
+## Sentry integration
+
+If you also use the [Sentry][docs-components-sentry] component, you can easily create Sentry events from the `tracing` events.
+Simply add `alert = true` key-value field:
+
+```rust
+use strut::tracing::*;
+
+#[strut::main]
+async fn main() {
+    error!(alert = true, "This will be also sent to Sentry");
+}
+```

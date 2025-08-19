@@ -1,0 +1,670 @@
+---
+sidebar_position: 2
+slug: database
+toc_max_heading_level: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Database
+
+[this-configuration]: #configuration
+[this-cargo-features]: #cargo-features
+[this-facade]: #facade
+[this-default-database-type]: #default-database-type
+
+[crates-io-sqlx]: https://crates.io/crates/sqlx
+
+[docs-rs-strut-database-facade]: https://docs.rs/strut/latest/strut/struct.Database.html
+[docs-rs-sqlx-pool]: https://docs.rs/sqlx/latest/sqlx/struct.Pool.html
+[docs-rs-strut-app-spindown]: https://docs.rs/strut/latest/strut/struct.AppSpindown.html
+
+Pre-fabricates [`sqlx`][crates-io-sqlx] database connection pools and closes connections during spindown.
+
+## Quickstart
+
+1. Enable one of the `database-{type}` [features][this-cargo-features].
+(Here we use an in-memory SQLite as an example.)
+
+```bash
+cargo add strut --features database-sqlite
+```
+
+2. Configure the default database.
+
+<Tabs>
+    <TabItem value="YAML">
+        ```yaml title="config/database.yaml"
+        database:
+            in_memory: true
+        ```
+    </TabItem>
+    <TabItem value="TOML">
+        ```toml title="config/database.toml"
+        [database]
+        in_memory = true
+        ```
+    </TabItem>
+</Tabs>
+
+3. The [`sqlx`][crates-io-sqlx] lazy connection pool can be retrieved from the [`Database`][this-facade] facade:
+
+```rust
+use strut::database::sqlx::*;
+use strut::Database;
+
+#[strut::main]
+async fn main() {
+    let pool: Pool<Sqlite> = Database::default();
+
+    // connection pool ready to use
+}
+```
+
+## Cargo features
+
+### ⛳︎ Feature `database-mysql` {#feature-database-mysql}
+
+Enables connections to MySQL/MariaDB databases.
+
+### ⛳︎ Feature `database-postgres` {#feature-database-postgres}
+
+Enables connections to PostgreSQL databases.
+
+### ⛳︎ Feature `database-sqlite` {#feature-database-sqlite}
+
+Enables connections to SQLite databases.
+
+### ⛳︎ Feature `database-default-mysql` {#feature-database-default-mysql}
+
+When multiple database types are enabled, marks MySQL/MariaDB as the default type.
+
+### ⛳︎ Feature `database-default-postgres` {#feature-database-default-postgres}
+
+When multiple database types are enabled, marks PostgreSQL as the default type.
+
+### ⛳︎ Feature `database-default-sqlite` {#feature-database-default-sqlite}
+
+When multiple database types are enabled, marks SQLite as the default type.
+
+### Default database type
+When only one `database-{type}` feature is enabled, this database type is also implicitly treated as the default type.
+When multiple database types are enabled, the ambiguity about the default type can be optionally broken using one of the `database-default-{type}` features.
+
+No more than one of the `database-default-{type}` features may be enabled at a time.
+Otherwise, a compilation error will occur.
+
+It is also valid to not have a default database type at all.
+
+## Component structure
+
+### ☑︎ Configuration {#configuration}
+
+The database component allows configuring any number of database handles.
+Most applications, however, would need just one.
+If the features indicate a [default database type][this-default-database-type], then an unnamed default database handle of that type can be configured.
+All other database handles are named.
+
+A full configuration is structured as such:
+
+<Tabs>
+    <TabItem value="YAML">
+        ```yaml title="config/database.yaml"
+        database:
+            # default database handle goes here
+
+            mysql:
+                named_mysql_a: {} # named_mysql_a database handle goes here
+                named_mysql_b: {} # named_mysql_b database handle goes here
+
+            postgres:
+                named_postgres_a: {} # named_postgres_a database handle goes here
+                named_postgres_b: {} # named_postgres_b database handle goes here
+
+            sqlite:
+                named_sqlite_a: {} # named_sqlite_a database handle goes here
+                named_sqlite_b: {} # named_sqlite_b database handle goes here
+        ```
+    </TabItem>
+    <TabItem value="TOML">
+        ```toml title="config/database.toml"
+        [database]
+        # default database handle goes here
+
+        [database.mysql]
+        named_mysql_a = {} # named_mysql_a database handle goes here
+        named_mysql_b = {} # named_mysql_b database handle goes here
+
+        [database.postgres]
+        named_postgres_a = {} # named_postgres_a database handle goes here
+        named_postgres_b = {} # named_postgres_b database handle goes here
+
+        [database.sqlite]
+        named_sqlite_a = {} # named_sqlite_a database handle goes here
+        named_sqlite_b = {} # named_sqlite_b database handle goes here
+        ```
+    </TabItem>
+</Tabs>
+
+An empty database handle (like in the example above) doesn’t make much sense (unless you are using a database on `localhost` with default port and credentials).
+Below are handle examples for each supported database types.
+
+#### MySQL/MariaDB handle
+
+A handle may be given using a URL.
+Don’t use this if you intend to overwrite password (or any part of the handle) using environment variables.
+
+<details>
+    <summary>MySQL/MariaDB **URL** handle</summary>
+
+    Various ways of configuring a MySQL/MariaDB handle as a URL:
+
+    <Tabs>
+        <TabItem value="YAML">
+            ```yaml title="config/database.yaml"
+            database:
+                url: mysql://root:password@localhost:3306/default # assuming MySQL/MariaDB is the default type
+
+                mysql: # two syntaxes below are equivalent
+                    named_mysql_a: mysql://root:password@localhost:3306/named_mysql_a
+                    named_mysql_b:
+                        url: mysql://root:password@localhost:3306/named_mysql_b
+            ```
+        </TabItem>
+        <TabItem value="TOML">
+            ```toml title="config/database.toml"
+            [database]
+            url = "mysql://root:password@localhost:3306/default" # assuming MySQL/MariaDB is the default type
+
+            # two syntaxes below are equivalent
+            [database.mysql]
+            named_mysql_a = "mysql://root:password@localhost:3306/named_mysql_a"
+
+            [database.mysql.named_mysql_b]
+            url = "mysql://root:password@localhost:3306/named_mysql_b"
+            ```
+        </TabItem>
+    </Tabs>
+</details>
+
+The exploded form is more appropriate if you plan to overwrite some part of the handle (like the password) using environment variables.
+
+<details>
+    <summary>MySQL/MariaDB **exploded** handle</summary>
+
+    Ways of configuring a MySQL/MariaDB handle in an exploded form:
+
+    <Tabs>
+        <TabItem value="YAML">
+            ```yaml title="config/database.yaml"
+            database:
+                host: localhost
+                port: 3306 # assuming MySQL/MariaDB is the default type
+                database: default
+
+                mysql:
+                    named_mysql:
+                        host: localhost
+                        port: 3306
+                        database: named_mysql
+            ```
+        </TabItem>
+        <TabItem value="TOML">
+            ```toml title="config/database.toml"
+            [database]
+            host = "localhost"
+            port = 3306 # assuming MySQL/MariaDB is the default type
+            database = "default"
+
+            [database.mysql.named_mysql]
+            host = "localhost"
+            port = 3306
+            database = "named_mysql"
+            ```
+        </TabItem>
+    </Tabs>
+</details>
+
+The full form is provided below for reference.
+
+<details>
+    <summary>MySQL/MariaDB **full** handle</summary>
+
+    <Tabs>
+        <TabItem value="YAML">
+            ```yaml title="config/database.yaml"
+            database: # assuming MySQL/MariaDB is the default type
+                host: localhost
+                port: 3306
+                username: root
+                password: password
+                database: db
+                socket: /var/run/mysqld/mysqld.sock
+                ssl_mode: preferred # disabled, preferred (default), required, verify_ca, verify_identity
+                ssl_ca: /etc/ssl/certs/ca-certificates.crt # or inline starting with `-----BEGIN`
+                ssl_client_cert: /etc/ssl/certs/client-cert.pem # as above
+                ssl_client_key: /etc/ssl/private/client-key.pem # as above
+                statement_cache_capacity: 100
+                charset: utf8mb4
+                collation: utf8mb4_unicode_ci
+                log_settings:
+                    statements_level: debug # off, error, warn, info, debug, trace
+                    slow_statements_level: warn # as above
+                    slow_statements_duration: 2s 500ms # parsed using `humantime` crate
+                pipes_as_concat: true
+                enable_cleartext_plugin: false
+                no_engine_substitution: true
+                timezone: +00:00
+                set_names: true
+                pool_options:
+                    min_connections: 0
+                    max_connections: 10
+                    test_before_acquire: true
+                    acquire_time_level: off # off, error, warn, info, debug, trace
+                    acquire_slow_level: warn # as above
+                    acquire_slow_threshold: 2s # parsed using `humantime` crate
+                    acquire_timeout: 30s # as above
+                    max_lifetime: 30min # as above
+                    idle_timeout: 10min # as above
+            ```
+        </TabItem>
+        <TabItem value="TOML">
+            ```toml title="config/database.toml"
+            [database] # assuming MySQL/MariaDB is the default type
+            host = "localhost"
+            port = 3306
+            username = "root"
+            password = "password"
+            database = "db"
+            socket = "/var/run/mysqld/mysqld.sock"
+            ssl_mode = "preferred" # disabled, preferred (default), required, verify_ca, verify_identity
+            ssl_ca = "/etc/ssl/certs/ca-certificates.crt" # or inline starting with `-----BEGIN`
+            ssl_client_cert = "/etc/ssl/certs/client-cert.pem" # as above
+            ssl_client_key = "/etc/ssl/private/client-key.pem" # as above
+            statement_cache_capacity = 100
+            charset = "utf8mb4"
+            collation = "utf8mb4_unicode_ci"
+            pipes_as_concat = true
+            enable_cleartext_plugin = false
+            no_engine_substitution = true
+            timezone = "+00:00"
+            set_names = true
+
+            [database.log_settings]
+            statements_level = "debug" # off, error, warn, info, debug, trace
+            slow_statements_level = "warn" # as above
+            slow_statements_duration = "2s 500ms" # parsed using `humantime` crate
+
+            [database.pool_options]
+            min_connections = 0
+            max_connections = 10
+            test_before_acquire = true
+            acquire_time_level = "off" # off, error, warn, info, debug, trace
+            acquire_slow_level = "warn" # as above
+            acquire_slow_threshold = "2s" # parsed using `humantime` crate
+            acquire_timeout = "30s" # as above
+            max_lifetime = "30min" # as above
+            idle_timeout = "10min" # as above
+            ```
+        </TabItem>
+    </Tabs>
+</details>
+
+#### PostgreSQL handle
+
+A handle may be given using a URL.
+Don’t use this if you intend to overwrite password (or any part of the handle) using environment variables.
+
+<details>
+    <summary>PostgreSQL **URL** handle</summary>
+
+    Various ways of configuring a PostgreSQL handle as a URL:
+
+    <Tabs>
+        <TabItem value="YAML">
+            ```yaml title="config/database.yaml"
+            database:
+                url: postgresql://user:secret@localhost:5433/default # assuming PostgreSQL is the default type
+
+                postgres: # two syntaxes below are equivalent
+                    named_postgres_a: postgresql://user:secret@localhost:5433/named_postgres_a
+                    named_postgres_b:
+                        url: postgresql://user:secret@localhost:5433/named_postgres_b
+            ```
+        </TabItem>
+        <TabItem value="TOML">
+            ```toml title="config/database.toml"
+            [database]
+            url = "postgresql://user:secret@localhost:5433/default" # assuming PostgreSQL is the default type
+
+            # two syntaxes below are equivalent
+            [database.postgres]
+            named_postgres_a = "postgresql://user:secret@localhost:5433/named_postgres_a"
+
+            [database.postgres.named_postgres_b]
+            url = "postgresql://user:secret@localhost:5433/named_postgres_b"
+            ```
+        </TabItem>
+    </Tabs>
+</details>
+
+The exploded form is more appropriate if you plan to overwrite some part of the handle (like the password) using environment variables.
+
+<details>
+    <summary>PostgreSQL **exploded** handle</summary>
+
+    Ways of configuring a PostgreSQL handle in an exploded form:
+
+    <Tabs>
+        <TabItem value="YAML">
+            ```yaml title="config/database.yaml"
+            database:
+                host: localhost
+                port: 5433 # assuming PostgreSQL is the default type
+                database: default
+
+                postgres:
+                    named_postgres:
+                        host: localhost
+                        port: 5433
+                        database: named_postgres
+            ```
+        </TabItem>
+        <TabItem value="TOML">
+            ```toml title="config/database.toml"
+            [database]
+            host = "localhost"
+            port = 5433 # assuming PostgreSQL is the default type
+            database = "default"
+
+            [database.postgres.named_postgres]
+            host = "localhost"
+            port = 5433
+            database = "named_postgres"
+            ```
+        </TabItem>
+    </Tabs>
+</details>
+
+The full form is provided below for reference.
+
+<details>
+    <summary>PostgreSQL **full** handle</summary>
+
+    <Tabs>
+        <TabItem value="YAML">
+            ```yaml title="config/database.yaml"
+            database: # assuming PostgreSQL is the default type
+                host: localhost
+                port: 5433
+                username: user
+                password: secret
+                database: db
+                socket: /var/run/postgresql/.s.PGSQL.5432
+                ssl_mode: prefer # disable, allow, prefer (default), require, verify_ca, verify_full
+                ssl_root_cert: /etc/ssl/certs/ca-certificates.crt # or inline starting with `-----BEGIN`
+                ssl_client_cert: /etc/ssl/certs/client-cert.pem # as above
+                ssl_client_key: /etc/ssl/private/client-key.pem # as above
+                statement_cache_capacity: 100
+                application_name: my-app
+                log_settings:
+                    statements_level: debug # off, error, warn, info, debug, trace
+                    slow_statements_level: warn # as above
+                    slow_statements_duration: 2s 500ms # parsed using `humantime` crate
+                extra_float_digits: 2
+                options:
+                    search_path: myschema,public
+                pool_options:
+                    min_connections: 0
+                    max_connections: 10
+                    test_before_acquire: true
+                    acquire_time_level: off # off, error, warn, info, debug, trace
+                    acquire_slow_level: warn # as above
+                    acquire_slow_threshold: 2s # parsed using `humantime` crate
+                    acquire_timeout: 30s # as above
+                    max_lifetime: 30min # as above
+                    idle_timeout: 10min # as above
+            ```
+        </TabItem>
+        <TabItem value="TOML">
+            ```toml title="config/database.toml"
+            [database] # assuming PostgreSQL is the default type
+            host = "localhost"
+            port = 5433
+            username = "user"
+            password = "secret"
+            database = "db"
+            socket = "/var/run/postgresql/.s.PGSQL.5432"
+            ssl_mode = "prefer" # disable, allow, prefer (default), require, verify_ca, verify_full
+            ssl_root_cert = "/etc/ssl/certs/ca-certificates.crt" # or inline starting with `-----BEGIN`
+            ssl_client_cert = "/etc/ssl/certs/client-cert.pem" # as above
+            ssl_client_key = "/etc/ssl/private/client-key.pem" # as above
+            statement_cache_capacity = 100
+            application_name = "my-app"
+            extra_float_digits = 2
+
+            [database.log_settings]
+            statements_level = "debug" # off, error, warn, info, debug, trace
+            slow_statements_level = "warn" # as above
+            slow_statements_duration = "2s 500ms" # parsed using `humantime` crate
+
+            [database.options]
+            search_path = "myschema,public"
+
+            [database.pool_options]
+            min_connections = 0
+            max_connections = 10
+            test_before_acquire = true
+            acquire_time_level = "off" # off, error, warn, info, debug, trace
+            acquire_slow_level = "warn" # as above
+            acquire_slow_threshold = "2s" # parsed using `humantime` crate
+            acquire_timeout = "30s" # as above
+            max_lifetime = "30min" # as above
+            idle_timeout = "10min" # as above
+            ```
+        </TabItem>
+    </Tabs>
+</details>
+
+#### SQLite handle
+
+A handle may be given using a URL.
+Don’t use this if you intend to overwrite password (or any part of the handle) using environment variables.
+
+<details>
+    <summary>SQLite **URL** handle</summary>
+
+    Various ways of configuring a SQLite handle as a URL:
+
+    <Tabs>
+        <TabItem value="YAML">
+            ```yaml title="config/database.yaml"
+            database:
+                url: sqlite://default.db?mode=ro # assuming SQLite is the default type
+
+                sqlite: # two syntaxes below are equivalent
+                    named_sqlite_a: sqlite://named_sqlite_a.db?mode=ro
+                    named_sqlite_b:
+                        url: sqlite://named_sqlite_b.db?mode=ro
+            ```
+        </TabItem>
+        <TabItem value="TOML">
+            ```toml title="config/database.toml"
+            [database]
+            url = "sqlite://default.db?mode=ro" # assuming SQLite is the default type
+
+            # two syntaxes below are equivalent
+            [database.sqlite]
+            named_sqlite_a = "sqlite://named_sqlite_a.db?mode=ro"
+
+            [database.sqlite.named_sqlite_b]
+            url = "sqlite://named_sqlite_b.db?mode=ro"
+            ```
+        </TabItem>
+    </Tabs>
+</details>
+
+The exploded form is more appropriate if you plan to overwrite some part of the handle (like the password) using environment variables.
+
+<details>
+    <summary>SQLite **exploded** handle</summary>
+
+    Ways of configuring a SQLite handle in an exploded form:
+
+    <Tabs>
+        <TabItem value="YAML">
+            ```yaml title="config/database.yaml"
+            database: # assuming SQLite is the default type
+                filename: 'default.db'
+                in_memory: false
+                read_only: false
+                create_if_missing: false
+
+                sqlite:
+                    named_sqlite:
+                        filename: 'named_sqlite.db'
+                        in_memory: false
+                        read_only: false
+                        create_if_missing: false
+            ```
+        </TabItem>
+        <TabItem value="TOML">
+            ```toml title="config/database.toml"
+            [database] # assuming SQLite is the default type
+            filename = "default.db"
+            in_memory = false
+            read_only = false
+            create_if_missing = false
+
+            [database.sqlite.named_sqlite]
+            filename = "named_sqlite.db"
+            in_memory = false
+            read_only = false
+            create_if_missing = false
+            ```
+        </TabItem>
+    </Tabs>
+</details>
+
+The full form is provided below for reference.
+
+<details>
+    <summary>SQLite **full** handle</summary>
+
+    <Tabs>
+        <TabItem value="YAML">
+            ```yaml title="config/database.yaml"
+            database: # assuming SQLite is the default type
+                filename: ':memory:'
+                in_memory: true
+                read_only: false
+                create_if_missing: false
+                shared_cache: false
+                statement_cache_capacity: 100
+                busy_timeout: 5s # parsed using `humantime` crate
+                log_settings:
+                    statements_level: debug # off, error, warn, info, debug, trace
+                    slow_statements_level: warn # as above
+                    slow_statements_duration: 2s 500ms # parsed using `humantime` crate
+                immutable: false
+                vfs: unix-dotfile
+                pragmas:
+                    foreign_keys: ON
+                extensions:
+                    extension_a: /path/to/entrypoint
+                command_channel_size: 50
+                row_channel_size: 50
+                serialized: false
+                thread_name_prefix: sqlx-sqlite-worker-
+                optimize_on_close:
+                    enabled: false
+                    analysis_limit: 50
+                pool_options:
+                    min_connections: 0
+                    max_connections: 10
+                    test_before_acquire: true
+                    acquire_time_level: off # off, error, warn, info, debug, trace
+                    acquire_slow_level: warn # as above
+                    acquire_slow_threshold: 2s # parsed using `humantime` crate
+                    acquire_timeout: 30s # as above
+                    max_lifetime: 30min # as above
+                    idle_timeout: 10min # as above
+            ```
+        </TabItem>
+        <TabItem value="TOML">
+            ```toml title="config/database.toml"
+            [database] # assuming SQLite is the default type
+            filename = ":memory:"
+            in_memory = true
+            read_only = false
+            create_if_missing = false
+            shared_cache = false
+            statement_cache_capacity = 100
+            busy_timeout = "5s" # parsed using `humantime` crate
+            immutable = false
+            vfs = "unix-dotfile"
+            command_channel_size = 50
+            row_channel_size = 50
+            serialized = false
+            thread_name_prefix = "sqlx-sqlite-worker-"
+
+            [database.log_settings]
+            statements_level = "debug" # off, error, warn, info, debug, trace
+            slow_statements_level = "warn" # as above
+            slow_statements_duration = "2s 500ms" # parsed using `humantime` crate
+
+            [database.pragmas]
+            foreign_keys = "ON"
+
+            [database.extensions]
+            extension_a = "/path/to/entrypoint"
+
+            [database.optimize_on_close]
+            enabled = false
+            analysis_limit = 50
+
+            [database.pool_options]
+            min_connections = 0
+            max_connections = 10
+            test_before_acquire = true
+            acquire_time_level = "off" # off, error, warn, info, debug, trace
+            acquire_slow_level = "warn" # as above
+            acquire_slow_threshold = "2s" # parsed using `humantime` crate
+            acquire_timeout = "30s" # as above
+            max_lifetime = "30min" # as above
+            idle_timeout = "10min" # as above
+            ```
+        </TabItem>
+    </Tabs>
+</details>
+
+### ∅ Startup {#startup}
+
+_This component does not include any startup logic._
+
+### ☑︎ Facade {#facade}
+
+Use the [`Database`][docs-rs-strut-database-facade] facade to retrieve the [pre-configured][this-configuration] `sqlx` database [connection pools][docs-rs-sqlx-pool].
+
+```rust
+use strut::database::sqlx::*;
+use strut::Database;
+
+#[strut::main]
+async fn main() {
+    let default_mysql: Pool<MySql> = Database::default(); // assuming MySQL/MariaDB is the default type
+
+    let named_mysql: Pool<MySql> = Database::mysql("named_mysql");
+    let named_postgres: Pool<Postgres> = Database::postgres("named_postgres");
+    let named_sqlite: Pool<Sqlite> = Database::sqlite("named_sqlite");
+}
+```
+
+- Returned pools are lazy — there cannot be a connection error until you try to use it.
+- The default pool and each of the named pools are singletons (initialized once, then cloned).
+- Retrieving an undefined name will result in a panic.
+
+### ☑︎ Spindown {#spindown}
+
+The component automatically attempts to close connections in all connection pools during [spindown][docs-rs-strut-app-spindown].

@@ -1,0 +1,83 @@
+---
+sidebar_position: 6
+slug: /components
+---
+
+# Components
+
+[docs-config]: /docs/config
+[docs-components-tracing]: /docs/components/tracing
+[docs-components-database]: /docs/components/database
+[docs-custom]: /docs/custom
+
+[crates-io-strut]: https://crates.io/crates/strut
+[crates-io-strut-tracing]: https://crates.io/crates/strut-tracing
+
+[crates-io-tracing]: https://crates.io/crates/tracing
+
+[docs-rs-strut-launchpad]: https://docs.rs/strut/latest/strut/struct.Launchpad.html
+[docs-rs-strut-tracing-config]: https://docs.rs/strut-tracing/latest/strut_tracing/struct.TracingConfig.html
+[docs-rs-strut-app-config]: https://docs.rs/strut/latest/strut/struct.AppConfig.html
+[docs-rs-strut-database-facade]: https://docs.rs/strut/latest/strut/struct.Database.html
+[docs-rs-strut-app-context]: https://docs.rs/strut/latest/strut/struct.AppContext.html
+[docs-rs-strut-app-spindown]: https://docs.rs/strut/latest/strut/struct.AppSpindown.html
+
+[docs-rs-tracing-set-global-default]: https://docs.rs/tracing/latest/tracing/subscriber/fn.set_global_default.html
+
+[github-issues]: https://github.com/strut-rs/strut/issues
+[discord]: https://discord.gg/KNkJuMkY
+[contributing]: https://github.com/strut-rs/strut/blob/master/CONTRIBUTING.md
+
+The value of Strut primarily comes from the components, which are included via Cargo features on the [`strut`][crates-io-strut] crate.
+
+## Component structure
+
+A typical Strut component takes a popular Rust crate and removes boilerplate code required to configure or use that crate.
+Possible customization choices are externalized into [config][docs-config], and any trivial setup/spindown logic is moved under the hood.
+
+Such component would usually have some combination of the following:
+
+### ☑︎ Configuration section {#configuration-section}
+
+A config section is a de-serializable struct that is included at the top level of [`AppConfig`][docs-rs-strut-app-config].
+
+- _Example_: [`TracingConfig`][docs-rs-strut-tracing-config] from the [tracing][docs-components-tracing] component.
+- These structs enable deserialization from empty, partial, or fuzzy input.
+
+### ☑︎ Startup logic {#startup-logic}
+
+- _Example_: [setting global subscriber][docs-rs-tracing-set-global-default] from the [tracing][docs-components-tracing] component.
+- This is normally called from a [`Launchpad`][docs-rs-strut-launchpad] wiring.
+
+### ☑︎ Client-facing facade. {#client-facing-facade}
+
+- _Example_: [`Database`][docs-rs-strut-database-facade] from the [database][docs-components-database] component.
+- A facade exposes associated functions that return pre-fabricated objects, such as database connection pools.
+
+### ☑︎ Spindown logic. {#spindown-logic}
+
+- _Example_: closing database connections before the process exits.
+- A component registers itself in the [spindown registry][docs-rs-strut-app-spindown]; waits for the [application context][docs-rs-strut-app-context] to terminate; performs spindown duties; then signals back to the registry that it completed gracefully.
+
+## Conventions
+
+### API re-export
+
+When the underlying third-party crate is intended to be used after configuration, Strut typically re-exports that crate’s public API, either fully or partially.
+For example, the [tracing][docs-components-tracing] component re-esports parts of the [`tracing`][crates-io-tracing] crate’s API under the `strut::tracing::*` module.
+The idea is that after enabling the Strut component, there is no need to depend also on the underlying crate.
+
+## Contributing
+
+Strut could always use more components.
+While, [custom integrations][docs-custom] are possible in the client code, a component is most convenient when the [`strut`][crates-io-strut] crate is aware of it.
+We are maintaining an open door [contribution policy][contributing].
+
+If you have an eye on a popular Rust crate that could use some boilerplate trimming, you have options to contribute to Strut:
+
+- If you just want to raise awareness — check out our [GitHub issues][github-issues].
+    - Search for and upvote the petition to add your crate.
+    - Or create a new petition if your crate isn’t yet mentioned.
+- If you feel like contributing your code and efforts — firstly, thank you.
+    - Our [Discord server][discord] is the place to go for discussions and advice.
+    - You may also want to check out our [`CONTRIBUTING.md`][contributing].

@@ -1,0 +1,171 @@
+---
+sidebar_position: 4
+slug: /config
+title: Configuration
+---
+
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+
+# Runtime configuration
+
+[this-feature-config-live]: #feature-config-live
+[this-config-files]: #config-files
+[this-environment-config]: #environment-config
+[this-slugs-config-keys]: #slugs-config-keys
+
+[docs-profile]: /docs/profile
+
+[crates-io-config]: https://crates.io/crates/config
+[crates-io-tracing]: https://crates.io/crates/tracing
+[crates-io-sqlx]: https://crates.io/crates/sqlx
+
+[docs-rs-strut-launchpad]: https://docs.rs/strut/latest/strut/struct.Launchpad.html
+[docs-rs-strut-config-wiring]: https://docs.rs/strut/latest/strut/struct.ConfigurationWiring.html
+[docs-rs-strut-app-config]: https://docs.rs/strut/latest/strut/struct.AppConfig.html
+[docs-rs-strut-app-live-config]: https://docs.rs/strut/latest/strut/struct.AppLiveConfig.html
+
+[docs-rs-config-builder]: https://docs.rs/config/latest/config/builder/struct.ConfigBuilder.html
+[docs-rs-config-default-state]: https://docs.rs/config/latest/config/builder/struct.DefaultState.html
+[docs-rs-config-async-state]: https://docs.rs/config/latest/config/builder/struct.AsyncState.html
+
+[rust-current-dir]: https://doc.rust-lang.org/std/env/fn.current_dir.html
+
+Strut primarily aims to remove chores that stand in the way of writing application logic.
+Most often this comes down to pre-configuring common public crates, such as [`tracing`][crates-io-tracing] or [`sqlx`][crates-io-sqlx].
+
+The philosophy of Strut configuration is:
+
+- Reasonable defaults for everything.
+    - This means minimal configuration is always no configuration at all.
+- Customization through files and environment, including:
+    - Flexible interpretation of human inputs.
+    - Simple and readable naming conventions.
+
+The entire configuration is represented by the **[`AppConfig` struct][docs-rs-strut-app-config]**, which also acts as a facade (a collection of associated function) for accessing the loaded & parsed configuration.
+Strut uses the [`config`][crates-io-config] crate for loading and parsing.
+
+## Initial vs live
+
+Strut maintains two distinct versions of configuration:
+
+- **Initial** configuration is loaded and parsed eagerly on startup.
+    - Afterward, it remains immutable throughout the lifetime of the application.
+    - Use the [`AppConfig`][docs-rs-strut-app-config] facade for working with initial config.
+- **Live** configuration may be enabled via the [`config-live` feature][this-feature-config-live].
+    - As the name suggests, this configuration may be manually refreshed at any time.
+    - Use the [`AppLiveConfig`][docs-rs-strut-app-live-config] facade for working with live config.
+
+:::warning[Strut uses initial config]
+Currently all Strut components use the initial config implicitly.
+:::
+
+## Cargo features
+
+In the basic form, Strut only loads the initial, synchronous `AppConfig` from the following sources:
+
+- [Config files][this-config-files].
+- [Environment variables][this-environment-config].
+
+The following features may be also enabled:
+
+### Feature `config-async`
+
+Under the hood Strut uses a [synchronous][docs-rs-config-default-state] [`ConfigBuilder`][docs-rs-config-builder].
+Enable this feature to switch it to [asynchronous state][docs-rs-config-async-state].
+Then, customize the config builder via a custom [`ConfigurationWiring`][docs-rs-strut-config-wiring].
+
+### Feature `config-live`
+
+By default, Strut loads and parses the configuration only once (the initial config).
+Enable this feature to gain the ability to refresh the config at any time via the [`AppLiveConfig`][docs-rs-strut-app-live-config] facade.
+
+## Config files
+
+Strut automatically loads external configuration files from the `config` directory located in the [current working directory][rust-current-dir] of the running process.
+When running the application using Cargo (e.g., `cargo run`) or via an IDE, the `config` directory is taken relative to the crate root (where `Cargo.toml` is located).
+You can change the `config` directory to any relative or absolute path via [`Launchpad`][docs-rs-strut-launchpad].
+
+### File naming convention
+
+- Accepted formats/extensions:
+    - TOML (`*.toml`).
+    - YAML (`*.yaml` or `*.yml`).
+- **Generic** files are applied always.
+    - Pattern: `config/{any_name}.{ext}`
+- **Profile-specific** files are applied when the file’s profile matches the [active profile][docs-profile].
+    - Patterns:
+        - `config/{any_name}.{profile}.{ext}`
+        - `config/{profile}/{any_name}.{ext}`
+
+Within the convention, you can spread the config across arbitrarily named files.
+These separate key-value maps are merged during loading.
+When keys overlap, profile-specific values take precedence.
+
+## Slugs (config keys)
+
+Strut strives to be permissive when interpreting user-provided config.
+
+All config slugs in Strut are case-insensitive, and only take ASCII alphanumeric characters into account when matching.
+This means that slugs like `map-s`, `MapS`, `maps`, and even `+++MAP_S+++` are all identical.
+
+This matching style applies to all built-in configuration keys and enumeration-style values (e.g., `blue`/`green`, `error`/`warn`/`info`, etc.).
+Scalar values like integers or booleans, as well as literal values like file paths are, of course, not slugs.
+
+:::warning[User-provided slugs]
+Some components allow user-provided configuration keys.
+An example would be a list of database connection handles:
+
+<Tabs>
+    <TabItem value="YAML">
+        ```yaml title="config/database.yaml"
+        database:
+            mysql:
+                my-database: mysql://username:changeme@example.com:3306/my_database
+                other-database: mysql://username:changeme@example.com:3306/other_database
+        ```
+    </TabItem>
+    <TabItem value="TOML">
+        ```toml title="config/database.toml"
+        [database.mysql]
+        "my-database" = "mysql://username:changeme@example.com:3306/my_database"
+        "other-database" = "mysql://username:changeme@example.com:3306/other_database"
+        ```
+    </TabItem>
+</Tabs>
+
+Such keys are also slugs.
+
+In the example above, `my-database` can be retrieved using `MyDataBase` or any other equivalent slug.
+This means that using distinct keys that differ only in punctuation (e.g., `value_a` and `VALUEA`) is a logical error (despite being valid YAML/TOML), and will lead to the two keys being squashed together.
+:::
+
+## Environment config
+
+All config key-values can be overwritten via environment variables.
+Matching of environment variable names to config keys happens automatically, using a naming convention:
+
+- Always use the `APP_` prefix.
+- Squash individual [slugs][this-slugs-config-keys] (config keys) into `SINGLEWORD`.
+- Use underscores `_` as slug separators.
+- Letter case doesn’t really matter, but UPPERCASE is conventional.
+
+It is probably easier to learn this by example:
+
+- Config key: **`name`**.
+    - Corresponding environment variable: **`APP_NAME`**.
+    - Just add the `APP_` prefix.
+- Config key: **`tracing.show_file`**.
+    - Corresponding environment variable: **`APP_TRACING_SHOWFILE`**.
+    - Squash individual [slugs][this-slugs-config-keys] (such as `single_word`) into `SINGLEWORD`.
+    - Replace dot separators `.` with underscores `_`.
+
+A few more examples:
+
+- `database.url` -> `APP_DATABASE_URL`.
+- `database.mysql.some_handle.pool.idle_timeout` -> `APP_DATABASE_MYSQL_SOMEHANDLE_POOL_IDLETIMEOUT`.
+
+Strut optionally reads environment defaults from the `.env` and `.env.local` files in the same place as it [looks][this-config-files] for the `config` directory.
+Conventionally, `.env` is committed to the version control system, but `.env.local` is not.
+
+You can customize the naming convention for environment variables (and disable environment config altogether) via [`Launchpad`][docs-rs-strut-launchpad].

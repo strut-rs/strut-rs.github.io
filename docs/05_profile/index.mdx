@@ -1,0 +1,67 @@
+---
+sidebar_position: 4
+slug: /profile
+title: Profile
+---
+
+# Runtime profile
+
+[docs-config-file-naming-convention]: /docs/config#file-naming-convention
+
+[docs-rs-strut-app-profile]: https://docs.rs/strut-core/latest/strut_core/enum.AppProfile.html
+
+Strut maintains the familiar concept of runtime profiles.
+Profiles are represented by the [`AppProfile`][docs-rs-strut-app-profile] enumeration.
+
+At runtime, exactly one profile is **active**.
+There is no auto-detection mechanism for the active profile.
+Instead, active profile is specified in the environment variable `APP_PROFILE`.
+
+:::note[No automated inference?]
+In the Rust world, there is no reliable, built-in way to infer the active runtime profile from the environment.
+For one, Rust & Cargo don’t expose any _runtime_ markers of test execution.
+This is presumably done to discourage test-specific behavior and instead test actual production code.
+
+This leaves us with a requirement to use something like `APP_PROFILE=test cargo test ...`, for example to plug an in-memory database during testing.
+
+If in the future the situation changes, Strut may introduce inference logic.
+:::
+
+## Profiles
+
+There are three well-recognized profiles:
+
+- `Prod` (`"prod"`)
+- `Dev` (`"dev"`)
+- `Test` (`"test"`)
+
+`Dev` is the global default when no profile is specified.
+
+Custom named profiles are supported through the `Custom` case.
+Any custom profile must be a string that is:
+
+- ASCII alphanumeric (other characters are ignored).
+- No longer than 7 characters (extra characters are truncated).
+- Lowercase (uppercase characters are converted).
+
+## Quickstart
+
+Currently, Strut uses the active runtime profile only to establish [which profile-specific config files to load][docs-config-file-naming-convention].
+
+Client code can make runtime choices based on the active profile as such:
+
+```rust
+use strut::core::AppProfile;
+
+match AppProfile::active() {
+    AppProfile::Prod => println!("We are in prod"),
+    AppProfile::Dev => println!("We are in dev"),
+    AppProfile::Test => println!("We are in test"),
+    AppProfile::Custom(name) => {
+        match name.as_str() {
+            "preprod" => println!("We are in preprod"),
+            other => println!("We are in {}", other),
+        };
+    }
+};
+```
