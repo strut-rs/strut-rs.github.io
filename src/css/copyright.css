@@ -1,0 +1,23 @@
+/* Light theme */
+:root {
+    --ifm-footer-color: #8e8e8e;
+    --ifm-footer-border-color: rgba(142, 142, 142, 0.5);
+}
+
+/* Dark theme */
+[data-theme='dark'] {
+    --ifm-footer-color: #6c6c6c;
+    --ifm-footer-border-color: rgba(108, 108, 108, 0.5);
+}
+
+.footer__copyright {
+    color: var(--ifm-footer-color);
+    font-size: 0.875rem;
+}
+
+.footer__copyright a,
+.footer__copyright a:visited {
+    color: var(--ifm-footer-color);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--ifm-footer-border-color);
+}

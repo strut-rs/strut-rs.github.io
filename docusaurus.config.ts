@@ -4,6 +4,10 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
+const startYear = 2025;
+const currentYear = new Date().getFullYear();
+const copyrightYears = currentYear > startYear ? `${startYear}–${currentYear}` : startYear;
+
 const config: Config = {
     title: 'Strut',
     tagline: 'Backend in Rust: convenient and configurable with Strut',
@@ -54,6 +58,7 @@ const config: Config = {
                 theme: {
                     customCss: [
                         './src/css/announcement-bar.css',
+                        './src/css/copyright.css',
                     ],
                 },
             } satisfies Preset.Options,
@@ -178,7 +183,7 @@ const config: Config = {
                     ],
                 },
             ],
-            copyright: `Copyright © ${new Date().getFullYear()} Strut.`,
+            copyright: `Copyright © ${copyrightYears} <a href="https://www.linkedin.com/in/lambdas-and-latte/" target="_blank" rel="noopener noreferrer">Erik Sargazakov</a> and Strut contributors.`,
         },
 
         prism: {
