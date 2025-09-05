@@ -72,15 +72,9 @@ const config: Config = {
     themeConfig: {
         image: 'img/social-card.png',
 
-        announcementBar: {
-            id: 'pre-release-notice',
-            content: 'This is a pre-release page; development is in progress',
-            isCloseable: false,
-        },
-
         // announcementBar: {
-        //     id: 'rust-conf-2025',
-        //     content: 'Join us at <a target="_blank" rel="noopener noreferrer" href="https://rustconf.com/">#RustConf2025</a>',
+        //     id: 'pre-release-notice',
+        //     content: 'This is a pre-release page; development is in progress',
         //     isCloseable: false,
         // },
 
@@ -183,7 +177,7 @@ const config: Config = {
                     ],
                 },
             ],
-            copyright: `Copyright © ${copyrightYears} <a href="https://www.linkedin.com/in/lambdas-and-latte/" target="_blank" rel="noopener noreferrer">Erik Sargazakov</a> and Strut contributors.`,
+            copyright: `Copyright © ${copyrightYears} <a href="/blog/authors" target="_blank" rel="noopener noreferrer">Strut authors</a>.`,
         },
 
         prism: {
