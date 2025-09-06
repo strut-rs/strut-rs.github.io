@@ -9,7 +9,6 @@ title: Design
 [this-crate-versions]: #crate-versions
 
 [docs-components]: /docs/components
-[docs-component]: /docs/components
 [docs-config]: /docs/config
 
 [cargo-book-features]: https://doc.rust-lang.org/cargo/reference/features.html
@@ -64,6 +63,6 @@ Kindly don’t use Strut in public libraries. 🙏🏻
 As with any Rust library, there are two layers of customizing Strut:
 
 -  At compile time the [Cargo features][cargo-book-features] affect what [parts of Strut][docs-rs-strut-features] are pulled in.
-    - Features are grouped by [Strut component][docs-component] and are described in the component documentation.
+    - Features are grouped by [Strut component][docs-components] and are described in the component documentation.
     - As a design choice, the special [`default` feature][cargo-book-default-feature] is always empty in all Strut crates.
 -  At runtime, the included features are customized via [external configuration][docs-config].
