@@ -18,7 +18,7 @@ const config: Config = {
         v4: true,
     },
 
-    url: 'https://strut-rs.github.io',
+    url: 'https://strut.rs',
     baseUrl: '/',
 
     organizationName: 'strut-rs',
